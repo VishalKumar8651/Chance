@@ -289,7 +289,7 @@ window.showToast = showToast;
 // -----------------------------------------------
 // 13. CART STATE (Synced to MongoDB for logged-in users)
 // -----------------------------------------------
-const API_BASE = 'http://localhost:5000';
+const API_BASE = window.CHANCE_API_BASE ?? '';
 let cartItems = [];
 let cartCount = 0;
 
