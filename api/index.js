@@ -1,2 +1,2 @@
-// Vercel serverless entry — API only; static files are served from /public
-module.exports = require('../server');
+// Vercel serverless — API routes only (no GET / handler)
+module.exports = require('../app');
