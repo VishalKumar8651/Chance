@@ -1,4 +1,5 @@
 require('dotenv').config();
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const { MongoClient, ServerApiVersion } = require('mongodb');
@@ -223,6 +224,12 @@ app.use('/api', async (req, res, next) => {
     res.status(503).json({ success: false, message: 'Service temporarily unavailable.' });
   }
 });
+
+// Serve HTML, CSS, JS (must be after /api routes are registered)
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+app.use(express.static(path.join(__dirname)));
 
 module.exports = app;
 
