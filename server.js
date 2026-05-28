@@ -225,11 +225,14 @@ app.use('/api', async (req, res, next) => {
   }
 });
 
-// Serve HTML, CSS, JS (must be after /api routes are registered)
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
-});
-app.use(express.static(path.join(__dirname)));
+// Render/local: serve frontend from public/. Vercel serves public/ as static CDN.
+if (!process.env.VERCEL) {
+  const publicDir = path.join(__dirname, 'public');
+  app.get('/', (req, res) => {
+    res.sendFile(path.join(publicDir, 'index.html'));
+  });
+  app.use(express.static(publicDir));
+}
 
 module.exports = app;
 
