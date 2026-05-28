@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Chance — Where elegance meets opportunity. Discover the latest in luxury fashion and lifestyle." />
+  <title>Chance — Elegance Meets Opportunity</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Loader -->
+  <div id="loader" class="loader">
+    <div class="loader-inner">
+      <div class="loader-logo">C</div>
+      <div class="loader-bar"><div class="loader-fill"></div></div>
+      <p class="loader-text">Loading Chance...</p>
+    </div>
+  </div>
+
+  <!-- Custom Cursor -->
+  <div id="cursor" class="cursor"></div>
+  <div id="cursor-follower" class="cursor-follower"></div>
+
+  <!-- Particles -->
+  <canvas id="particles-canvas"></canvas>
+
+  <!-- ======================================================
+       PRODUCT QUICK VIEW MODAL
+  ====================================================== -->
+  <div id="product-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Product Quick View">
+    <div class="modal-container">
+      <button class="modal-close" id="modal-close" aria-label="Close">&times;</button>
+      <div class="modal-inner">
+        <div class="modal-img-wrap">
+          <img id="modal-img" src="assets/girl.jpg" alt="Product" />
+          <div class="modal-img-glow"></div>
+          <span id="modal-badge" class="modal-badge"></span>
+        </div>
+        <div class="modal-details">
+          <span id="modal-category" class="modal-category"></span>
+          <h2 id="modal-name" class="modal-name"></h2>
+          <div class="modal-price-row">
+            <span id="modal-price" class="modal-price-current"></span>
+            <span id="modal-price-old" class="modal-price-old"></span>
+            <span id="modal-discount" class="modal-discount-badge"></span>
+          </div>
+          <p id="modal-desc" class="modal-desc"></p>
+
+          <div class="modal-sizes">
+            <p class="modal-label">Select Size</p>
+            <div class="size-grid">
+              <button class="size-btn active">XS</button>
+              <button class="size-btn">S</button>
+              <button class="size-btn">M</button>
+              <button class="size-btn">L</button>
+              <button class="size-btn">XL</button>
+            </div>
+          </div>
+
+          <div class="modal-colors">
+            <p class="modal-label">Select Color</p>
+            <div class="color-swatches">
+              <button class="color-swatch active" style="background:#9333ea" aria-label="Purple"></button>
+              <button class="color-swatch" style="background:#ec4899" aria-label="Pink"></button>
+              <button class="color-swatch" style="background:#f59e0b" aria-label="Gold"></button>
+              <button class="color-swatch" style="background:#0ea5e9" aria-label="Blue"></button>
+            </div>
+          </div>
+
+          <div class="modal-qty">
+            <p class="modal-label">Quantity</p>
+            <div class="qty-control">
+              <button class="qty-btn" id="qty-minus" aria-label="Decrease">−</button>
+              <span id="qty-display">1</span>
+              <button class="qty-btn" id="qty-plus" aria-label="Increase">+</button>
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button class="btn-primary btn-lg modal-add-cart" id="modal-add-cart">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+              Add to Cart
+            </button>
+            <button class="btn-ghost btn-lg modal-wishlist" id="modal-wishlist">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              Wishlist
+            </button>
+          </div>
+
+          <div class="modal-meta">
+            <span>✦ Free delivery on orders above ₹2,000</span>
+            <span>✦ 7-day easy returns</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Overlay -->
+  <div id="search-overlay" class="search-overlay">
+    <div class="search-overlay-inner">
+      <button class="search-close" id="search-close">&times;</button>
+      <h3>Search Chance</h3>
+      <div class="search-bar-wrap">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" id="search-input" placeholder="Search dresses, collections..." autocomplete="off" />
+      </div>
+      <div class="search-tags">
+        <span>Popular:</span>
+        <button class="search-tag" onclick="searchFor('Evening Gown')">Evening Gown</button>
+        <button class="search-tag" onclick="searchFor('Luxury Silk')">Luxury Silk</button>
+        <button class="search-tag" onclick="searchFor('Casual')">Casual</button>
+        <button class="search-tag" onclick="searchFor('Bridal')">Bridal</button>
+      </div>
+      <div id="search-results" class="search-results"></div>
+    </div>
+  </div>
+
+  <!-- Cart Drawer -->
+  <div id="cart-drawer" class="cart-drawer">
+    <div class="cart-drawer-header">
+      <h3>Your Cart <span id="cart-count-label">(0)</span></h3>
+      <button class="cart-close" id="cart-close">&times;</button>
+    </div>
+    <div id="cart-items" class="cart-items">
+      <div class="cart-empty">
+        <div class="cart-empty-icon">🛍️</div>
+        <p>Your cart is empty</p>
+        <a href="#collection" class="btn-primary" onclick="closeCart()">Start Shopping</a>
+      </div>
+    </div>
+    <div class="cart-footer" id="cart-footer" style="display:none">
+      <div class="cart-total">
+        <span>Total</span>
+        <span id="cart-total-price">₹0</span>
+      </div>
+      <button class="btn-primary btn-lg" style="width:100%" onclick="handleCheckout()">Checkout ✦</button>
+    </div>
+  </div>
+  <div id="cart-overlay-bg" class="cart-overlay-bg"></div>
+
+  <!-- ========== HEADER ========== -->
+  <header id="header" class="header">
+    <div class="header-solid-bg"></div>
+    <nav class="nav container">
+      <a href="#" class="nav-logo" id="nav-logo-link" aria-label="Chance Home">
+        <img src="assets/logo.jpg" alt="Chance Logo" class="logo-img" id="logo-img"
+          onerror="this.style.display='none';document.getElementById('logo-text').style.display='block'" />
+        <span class="logo-text" id="logo-text" style="display:none;">✦ CHANCE</span>
+      </a>
+
+      <ul class="nav-links" id="nav-links">
+  <li><a href="index.html" class="nav-link active">Home</a></li>
+  <li><a href="about.html" class="nav-link">About</a></li>
+  <li><a href="collection.html" class="nav-link">Collection</a></li>
+  <li><a href="story.html" class="nav-link">Our Story</a></li>
+  <li><a href="contact.html" class="nav-link">Contact</a></li>
+  <li><a href="login.html" class="nav-link">Account</a></li>
+</ul>
+
+      <div class="nav-actions">
+        <button class="btn-icon" id="search-btn" aria-label="Search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+        <button class="btn-icon cart-btn" id="cart-btn" aria-label="Cart">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="cart-badge" id="cart-badge">0</span>
+        </button>
+        <a href="#collection" class="btn-primary nav-cta">Shop Now</a>
+        <button class="hamburger" id="hamburger" aria-label="Toggle Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+      <ul></ul>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ========== HERO ========== -->
+    <section id="home" class="hero">
+      <div class="hero-3d-scene">
+        <div class="floating-orb orb-1"></div>
+        <div class="floating-orb orb-2"></div>
+        <div class="floating-orb orb-3"></div>
+        <div class="geometric-ring ring-1"></div>
+        <div class="geometric-ring ring-2"></div>
+      </div>
+
+      <div class="hero-content container">
+        <div class="hero-text" id="hero-text">
+          <div class="hero-badge">✦ New Collection 2026</div>
+          <h1 class="hero-title">
+            <span class="title-line">Take Your</span>
+            <span class="title-line gradient-text">Chance</span>
+            <span class="title-line italic">on Style</span>
+          </h1>
+          <p class="hero-subtitle">Where elegance meets opportunity. Curated luxury fashion that transforms every moment into a statement.</p>
+          <div class="hero-buttons">
+            <a href="#collection" class="btn-primary btn-lg" id="explore-btn">Explore Collection</a>
+            <a href="#story" class="btn-ghost btn-lg" id="story-btn">Our Story</a>
+          </div>
+          <div class="hero-stats">
+            <div class="stat">
+              <span class="stat-num" data-target="500">0</span><span>+</span>
+              <p>Designs</p>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat">
+              <span class="stat-num" data-target="120">0</span><span>K+</span>
+              <p>Happy Clients</p>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat">
+              <span class="stat-num" data-target="15">0</span><span>+</span>
+              <p>Countries</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-image-wrap" id="hero-image-wrap">
+          <div class="hero-image-card" id="hero-card">
+            <div class="image-glow"></div>
+            <img src="assets/girl.jpg" alt="Chance Fashion Model" class="hero-girl-img" id="hero-girl-img"
+              onerror="this.parentElement.innerHTML='<div class=\'placeholder-girl\'><span>✦</span><p>CHANCE</p></div>'" />
+            <div class="image-badge-float"><span>✦ Featured</span></div>
+          </div>
+          <div class="hero-3d-card floating-card-1">
+            <div class="mini-card">
+              <span class="mini-icon">🌟</span>
+              <div><strong>New Drop</strong><p>Summer'26</p></div>
+            </div>
+          </div>
+          <div class="hero-3d-card floating-card-2">
+            <div class="mini-card">
+              <span class="mini-icon">💎</span>
+              <div><strong>Premium</strong><p>Curated Picks</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-indicator">
+        <div class="scroll-line"></div>
+        <span>Scroll</span>
+      </div>
+    </section>
+
+    <!-- ========== MARQUEE ========== -->
+    <div class="marquee-section">
+      <div class="marquee-track">
+        <div class="marquee-content">
+          <span>✦ Elegance</span><span>✦ Confidence</span><span>✦ Chance</span><span>✦ Style</span><span>✦ Luxury</span><span>✦ Fashion</span><span>✦ Grace</span><span>✦ Radiance</span>
+          <span>✦ Elegance</span><span>✦ Confidence</span><span>✦ Chance</span><span>✦ Style</span><span>✦ Luxury</span><span>✦ Fashion</span><span>✦ Grace</span><span>✦ Radiance</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== ABOUT ========== -->
+    <section id="about" class="about section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">About Chance</span>
+          <h2 class="section-title">More than <em>Fashion</em></h2>
+          <p class="section-subtitle">We believe every woman deserves to feel extraordinary. Chance is more than a brand — it's a movement.</p>
+        </div>
+        <div class="about-grid">
+          <div class="about-card card-3d">
+            <div class="about-card-icon">🌸</div>
+            <h3>Curated with Care</h3>
+            <p>Every piece is handpicked by our expert stylists to ensure only the finest quality reaches you.</p>
+          </div>
+          <div class="about-card card-3d">
+            <div class="about-card-icon">💜</div>
+            <h3>Made for Women</h3>
+            <p>Designed by women, for women. Our silhouettes celebrate every body type, every story.</p>
+          </div>
+          <div class="about-card card-3d">
+            <div class="about-card-icon">🌍</div>
+            <h3>Sustainably Sourced</h3>
+            <p>We partner with ethical artisans worldwide to create fashion that doesn't cost the earth.</p>
+          </div>
+          <div class="about-card card-3d">
+            <div class="about-card-icon">✨</div>
+            <h3>Timeless Style</h3>
+            <p>Trends fade. Chance lasts. Our designs are crafted to be worn today, tomorrow, and forever.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== COLLECTION ========== -->
+    <section id="collection" class="collection section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Latest Collection</span>
+          <h2 class="section-title">She's <em>Everywhere</em></h2>
+          <p class="section-subtitle">Discover pieces that tell her story — wherever she goes, whatever she does.</p>
+        </div>
+
+        <div class="collection-filters">
+          <button class="filter-btn active" data-filter="all" id="filter-all">All</button>
+          <button class="filter-btn" data-filter="evening" id="filter-evening">Evening</button>
+          <button class="filter-btn" data-filter="casual" id="filter-casual">Casual</button>
+          <button class="filter-btn" data-filter="luxury" id="filter-luxury">Luxury</button>
+          <button class="filter-btn" data-filter="bridal" id="filter-bridal">Bridal</button>
+        </div>
+
+        <!-- Products Grid — 8 cards -->
+        <div class="collection-grid" id="collection-grid">
+
+          <!-- 1 -->
+          <div class="product-card card-3d" data-category="evening"
+            data-name="Midnight Bloom Gown"
+            data-category-label="Evening Collection"
+            data-price="₹4,999" data-old="₹7,499" data-discount="33% OFF"
+            data-badge="New"
+            data-desc="An enchanting floor-length gown with a deep-plunge neckline and shimmering midnight blue fabric. Perfect for galas, anniversary dinners, and those evenings where you want to leave everyone breathless.">
+            <div class="product-img-wrap">
+              <img src="assets/Comatozze%20%F0%9F%A5%B5%20The%20Angel%20%F0%9F%98%87.jpg" alt="Midnight Bloom Gown" class="product-img" />
+              <div class="product-overlay">
+                <button class="btn-primary quick-view-btn">Quick View</button>
+              </div>
+              <span class="product-badge">New</span>
+            </div>
+            <div class="product-info">
+              <h4>Midnight Bloom Gown</h4>
+              <p>Evening Collection</p>
+              <div class="product-price">
+                <span class="price">₹4,999</span>
+                <span class="price-old">₹7,499</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2 -->
+          <div class="product-card card-3d featured" data-category="luxury"
+            data-name="Golden Hour Ensemble"
+            data-category-label="Luxury Collection"
+            data-price="₹8,999" data-old="₹12,999" data-discount="30% OFF"
+            data-badge="✦ Star"
+            data-desc="The crown jewel of our 2026 collection. A sculpted golden silk ensemble with hand-sewn crystal detailing, flowing train, and a timeless silhouette that commands every room it enters.">
+            <div class="product-img-wrap">
+              <img src="assets/Uma%20North.jpg" alt="Golden Hour Ensemble" class="product-img" />
+              <div class="product-overlay">
+                <button class="btn-primary quick-view-btn">Quick View</button>
+              </div>
+              <span class="product-badge badge-gold">✦ Star</span>
+            </div>
+            <div class="product-info">
+              <h4>Golden Hour Ensemble</h4>
+              <p>Luxury Collection</p>
+              <div class="product-price">
+                <span class="price">₹8,999</span>
+                <span class="price-old">₹12,999</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3 -->
+          <div class="product-card card-3d" data-category="casual"
+            data-name="Breezy Summer Set"
+            data-category-label="Casual Collection"
+            data-price="₹2,499" data-old="₹3,999" data-discount="37% OFF"
+            data-badge="Sale"
+            data-desc="Light, airy and effortlessly chic. This two-piece summer co-ord in breathable linen blends comfort with contemporary style. Great for brunches, beach walks, and everything in between.">
+            <div class="product-img-wrap">
+              <img src="assets/Beautiful%20Casual%20Dresses.jpg" alt="Breezy Summer Set" class="product-img" />
+              <div class="product-overlay">
+                <button class="btn-primary quick-view-btn">Quick View</button>
+              </div>
+              <span class="product-badge badge-pink">Sale</span>
+            </div>
+            <div class="product-info">
+              <h4>Breezy Summer Set</h4>
+              <p>Casual Collection</p>
+              <div class="product-price">
+                <span class="price">₹2,499</span>
+                <span class="price-old">₹3,999</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4 -->
+          <div class="product-card card-3d" data-category="evening"
+            data-name="Rose Petal Couture"
+            data-category-label="Evening Collection"
+            data-price="₹6,499" data-old="₹9,999" data-discount="35% OFF"
+            data-badge=""
+            data-desc="A dreamy rose-blush couture gown adorned with handcrafted petal appliqués. The bias-cut silhouette drapes beautifully on every frame, making it the perfect choice for cocktail events and soirées.">
+            <div class="product-img-wrap">
+              <img src="assets/cute%20simile.jpg" alt="Rose Petal Couture" class="product-img" />
+              <div class="product-overlay">
+                <button class="btn-primary quick-view-btn">Quick View</button>
+              </div>
+            </div>
+            <div class="product-info">
+              <h4>Rose Petal Couture</h4>
+              <p>Evening Collection</p>
+              <div class="product-price">
+                <span class="price">₹6,499</span>
+                <span class="price-old">₹9,999</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5 -->
+          <div class="product-card card-3d" data-category="bridal"
+            data-name="Ivory Dreams Bridal"
+            data-category-label="Bridal Collection"
+            data-price="₹18,999" data-old="₹24,999" data-discount="24% OFF"
+            data-badge="Bridal"
+            data-desc="Your dream wedding dress, reimagined. Ivory duchess satin with intricate lace detailing, a cathedral train, and a corset bodice that cinches at the waist for a stunning silhouette. Delivered with a complimentary veil.">
+            <div class="product-img-wrap">
+              <img src="assets/Comatozze%20%F0%9F%A5%B5%20The%20Angel%20%F0%9F%98%87.jpg" alt="Ivory Dreams Bridal" class="product-img" />
+              <div class="product-overlay">
+                <button class="btn-primary quick-view-btn">Quick View</button>
+              </div>
+              <span class="product-badge badge-bridal">Bridal</span>
+            </div>
+            <div class="product-info">
+              <h4>Ivory Dreams Bridal</h4>
+              <p>Bridal Collection</p>
+              <div class="product-price">
+                <span class="price">₹18,999</span>
+                <span class="price-old">₹24,999</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 6 -->
+          <div class="product-card card-3d" data-category="luxury"
+            data-name="Velvet Noir Gown"
+            data-category-label="Luxury Collection"
+            data-price="₹11,499" data-old="₹16,999" data-discount="32% OFF"
+            data-badge="Luxury"
+            data-desc="Pure indulgence in deep midnight velvet. This fitted column gown with a thigh-high slit and dramatic off-shoulder neckline is crafted for women who don't just enter rooms — they own them.">
+            <div class="product-img-wrap">
+              <img src="assets/Uma%20North.jpg" alt="Velvet Noir Gown" class="product-img" />
+              <div class="product-overlay">
+                <button class="btn-primary quick-view-btn">Quick View</button>
+              </div>
+              <span class="product-badge badge-gold">Luxury</span>
+            </div>
+            <div class="product-info">
+              <h4>Velvet Noir Gown</h4>
+              <p>Luxury Collection</p>
+              <div class="product-price">
+                <span class="price">₹11,499</span>
+                <span class="price-old">₹16,999</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 7 -->
+          <div class="product-card card-3d" data-category="casual"
+            data-name="Sunday Bloom Dress"
+            data-category-label="Casual Collection"
+            data-price="₹1,999" data-old="₹2,999" data-discount="33% OFF"
+            data-badge="Best Seller"
+            data-desc="The dress you'll reach for every Sunday. A flowy midi dress in a floral print with adjustable straps and a smocked bodice. Made from 100% organic cotton — light, soft, and effortless.">
+            <div class="product-img-wrap">
+              <img src="assets/Beautiful%20Casual%20Dresses.jpg" alt="Sunday Bloom Dress" class="product-img" />
+              <div class="product-overlay">
+                <button class="btn-primary quick-view-btn">Quick View</button>
+              </div>
+              <span class="product-badge badge-pink">Best Seller</span>
+            </div>
+            <div class="product-info">
+              <h4>Sunday Bloom Dress</h4>
+              <p>Casual Collection</p>
+              <div class="product-price">
+                <span class="price">₹1,999</span>
+                <span class="price-old">₹2,999</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 8 -->
+          <div class="product-card card-3d" data-category="bridal"
+            data-name="Blush Ceremony Lehenga"
+            data-category-label="Bridal Collection"
+            data-price="₹22,999" data-old="₹31,999" data-discount="28% OFF"
+            data-badge="New"
+            data-desc="A breathtaking blush pink lehenga set embroidered with real zari thread and mirror work. Comes with a dupatta and matching blouse. The perfect blend of tradition and contemporary luxury for your big day.">
+            <div class="product-img-wrap">
+              <img src="assets/cute%20simile.jpg" alt="Blush Ceremony Lehenga" class="product-img" />
+              <div class="product-overlay">
+                <button class="btn-primary quick-view-btn">Quick View</button>
+              </div>
+              <span class="product-badge">New</span>
+            </div>
+            <div class="product-info">
+              <h4>Blush Ceremony Lehenga</h4>
+              <p>Bridal Collection</p>
+              <div class="product-price">
+                <span class="price">₹22,999</span>
+                <span class="price-old">₹31,999</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="collection-cta">
+          <button class="btn-primary btn-lg" id="view-all-btn">View All Designs ✦</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== STORY ========== -->
+    <section id="story" class="story section">
+      <div class="container">
+        <div class="story-grid">
+          <div class="story-visual reveal-left">
+            <div class="story-img-frame">
+              <img src="assets/girl.jpg" alt="The Chance Story" class="story-img" />
+              <div class="story-img-accent"></div>
+            </div>
+            <div class="story-floating-tag">
+              <span>Since 2020</span>
+              <p>Redefining Fashion</p>
+            </div>
+          </div>
+          <div class="story-content reveal-right">
+            <span class="section-tag">Our Story</span>
+            <h2 class="section-title left-align">Born from a <em>Dream</em></h2>
+            <p class="story-para">It started with a vision — that every woman deserves to feel like the main character of her own story. Chance was born from a deep desire to create fashion that doesn't just cover the body, but celebrates the soul.</p>
+            <p class="story-para">From humble sketches to a global movement, our journey has been fueled by passion, authenticity, and the belief that the right outfit can change everything.</p>
+
+            <div class="story-features">
+              <div class="story-feature">
+                <div class="feature-icon">🏆</div>
+                <div>
+                  <strong>Award-Winning Design</strong>
+                  <p>Recognized globally for innovation in sustainable fashion.</p>
+                </div>
+              </div>
+              <div class="story-feature">
+                <div class="feature-icon">👑</div>
+                <div>
+                  <strong>Celebrity Loved</strong>
+                  <p>Worn by influencers and celebrities across the globe.</p>
+                </div>
+              </div>
+            </div>
+            <button class="btn-primary btn-lg discover-more-btn" id="discover-more-btn" style="margin-top:2rem;">
+              Discover More ✦
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== TESTIMONIALS ========== -->
+    <section class="testimonials section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Love Letters</span>
+          <h2 class="section-title">What they <em>Say</em></h2>
+        </div>
+        <div class="testimonials-grid">
+          <div class="testimonial-card card-3d">
+            <div class="stars">★★★★★</div>
+            <p>"Chance transformed my wardrobe and my confidence. Every piece feels like it was made just for me."</p>
+            <div class="testimonial-author">
+              <div class="author-avatar" style="background:linear-gradient(135deg,#7c3aed,#db2777)">A</div>
+              <div><strong>Ananya S.</strong><span>Fashion Blogger</span></div>
+            </div>
+          </div>
+          <div class="testimonial-card card-3d featured-testimonial">
+            <div class="stars">★★★★★</div>
+            <p>"Absolutely in love with the quality and packaging. Chance is now my go-to brand for every occasion!"</p>
+            <div class="testimonial-author">
+              <div class="author-avatar" style="background:linear-gradient(135deg,#0ea5e9,#7c3aed)">P</div>
+              <div><strong>Priya M.</strong><span>Lifestyle Influencer</span></div>
+            </div>
+          </div>
+          <div class="testimonial-card card-3d">
+            <div class="stars">★★★★★</div>
+            <p>"The Golden Hour Ensemble was exactly what I needed for my anniversary dinner. Felt like royalty!"</p>
+            <div class="testimonial-author">
+              <div class="author-avatar" style="background:linear-gradient(135deg,#f59e0b,#ef4444)">R</div>
+              <div><strong>Riya K.</strong><span>Design Lead</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== NEWSLETTER ========== -->
+    <section class="newsletter section">
+      <div class="newsletter-bg"></div>
+      <div class="container">
+        <div class="newsletter-content">
+          <span class="section-tag">Stay in the Loop</span>
+          <h2 class="section-title">Get First Access</h2>
+          <p>Subscribe for exclusive drops, styling tips, and members-only offers.</p>
+          <form class="newsletter-form" id="newsletter-form" onsubmit="handleSubscribe(event)">
+            <input type="email" id="email-input" placeholder="Enter your email address" required aria-label="Email address" />
+            <button type="submit" class="btn-primary">Subscribe ✦</button>
+          </form>
+          <p class="newsletter-note">No spam. Unsubscribe anytime. ✦ Privacy first.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== CONTACT ========== -->
+    <section id="contact" class="contact section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Get in Touch</span>
+          <h2 class="section-title">Let's <em>Connect</em></h2>
+          <p class="section-subtitle">We'd love to hear from you. Reach out for collaborations, inquiries, or just to say hello.</p>
+        </div>
+        <div class="contact-grid">
+          <div class="contact-info">
+            <div class="contact-item">
+              <div class="contact-icon">📍</div>
+              <div><strong>Visit Us</strong><p>123 Fashion Avenue, Mumbai, India 400001</p></div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon">📧</div>
+              <div><strong>Email Us</strong><p>hello@chancebydesign.com</p></div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon">📞</div>
+              <div><strong>Call Us</strong><p>+91 98765 43210</p></div>
+            </div>
+          </div>
+          <form class="contact-form" id="contact-form" onsubmit="handleContact(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="contact-name">Your Name</label>
+                <input type="text" id="contact-name" placeholder="Jane Doe" required />
+              </div>
+              <div class="form-group">
+                <label for="contact-email">Your Email</label>
+                <input type="email" id="contact-email" placeholder="jane@example.com" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="contact-subject">Subject</label>
+              <input type="text" id="contact-subject" placeholder="Tell us what's on your mind..." />
+            </div>
+            <div class="form-group">
+              <label for="contact-message">Message</label>
+              <textarea id="contact-message" rows="5" placeholder="Your message..." required></textarea>
+            </div>
+            <button type="submit" class="btn-primary btn-lg">Send Message ✦</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer">
+    <div class="footer-gradient-top"></div>
+    <div class="footer-bg-particles"></div>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="#" class="footer-logo">
+            <img src="assets/logo.jpg" alt="Chance" class="footer-logo-img"
+              onerror="this.style.display='none';document.querySelector('.footer-logo-fallback').style.display='block'" />
+            <span class="footer-logo-fallback" style="display:none;">✦ CHANCE</span>
+          </a>
+          <p class="footer-tagline">Where elegance meets opportunity. Curated luxury for the modern woman.</p>
+          <div class="social-links">
+            <a href="#" class="social-link" aria-label="Instagram">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+            </a>
+            <a href="#" class="social-link" aria-label="Pinterest">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 0 1 .083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+            </a>
+            <a href="#" class="social-link" aria-label="Twitter">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <a href="#" class="social-link" aria-label="YouTube">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+            </a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="collection.html">Collection</a></li>
+            <li><a href="story.html">Our Story</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Collections</h4>
+          <ul class="footer-links">
+            <li><a href="#" onclick="filterCollection('evening')">Evening Wear</a></li>
+            <li><a href="#" onclick="filterCollection('casual')">Casual Chic</a></li>
+            <li><a href="#" onclick="filterCollection('luxury')">Luxury Series</a></li>
+            <li><a href="#" onclick="filterCollection('bridal')">Bridal</a></li>
+            <li><a href="#collection">All Designs</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Support</h4>
+          <ul class="footer-links">
+            <li><a href="#" onclick="showToast('Size guide coming soon! 📏')">Size Guide</a></li>
+            <li><a href="#" onclick="showToast('Free shipping on orders above ₹2,000 🚚')">Shipping Info</a></li>
+            <li><a href="#" onclick="showToast('7-day easy returns guaranteed ✦')">Returns</a></li>
+            <li><a href="#contact">FAQs</a></li>
+            <li><a href="#" onclick="showToast('Privacy is our promise ✦')">Privacy Policy</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Chance. All rights reserved. Made with ❤️ for the modern woman.</p>
+        <p>Designed with elegance ✦ for every occasion</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast -->
+  <div id="toast" class="toast" role="alert" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>

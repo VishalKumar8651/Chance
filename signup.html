@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Create your Chance account — Join the elegance." />
+  <title>Sign Up — Chance</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="pages.css" />
+  <style>
+    .auth-section {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: calc(var(--header-h, 80px) + 2rem) 1rem 4rem;
+      position: relative;
+      overflow: hidden;
+      background: radial-gradient(circle at top right, rgba(147, 51, 234, 0.12), transparent 50%),
+        radial-gradient(circle at bottom left, rgba(236, 72, 153, 0.12), transparent 50%);
+    }
+
+    .auth-container {
+      width: 100%;
+      max-width: 460px;
+      background: rgba(13, 9, 20, 0.65);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-xl, 20px);
+      padding: 3rem 2.5rem;
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55), 0 0 50px rgba(147, 51, 234, 0.12);
+      animation: fadeInUp 0.6s ease both;
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .auth-logo {
+      font-family: var(--font-display, 'Playfair Display', serif);
+      font-size: 1rem;
+      letter-spacing: 0.3em;
+      color: var(--clr-text-muted, #aaa);
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .auth-title {
+      font-family: var(--font-display, 'Playfair Display', serif);
+      font-size: 2.4rem;
+      margin-bottom: 0.5rem;
+      background: var(--gradient-main, linear-gradient(135deg, #9333ea, #ec4899));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .auth-subtitle {
+      color: var(--clr-text-muted, #aaa);
+      font-size: 0.95rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.4rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+      color: var(--clr-text, #fff);
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.95rem 1.2rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-md, 10px);
+      color: var(--clr-text, #fff);
+      font-family: var(--font-body, 'Inter', sans-serif);
+      font-size: 0.95rem;
+      transition: all 0.25s ease;
+      box-sizing: border-box;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #9333ea;
+      box-shadow: 0 0 18px rgba(147, 51, 234, 0.22);
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .password-strength {
+      margin-top: 0.4rem;
+      height: 3px;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+    }
+
+    .password-strength-bar {
+      height: 100%;
+      width: 0%;
+      border-radius: 2px;
+      transition: width 0.4s ease, background 0.4s ease;
+    }
+
+    .strength-label {
+      font-size: 0.75rem;
+      margin-top: 0.3rem;
+      color: var(--clr-text-muted, #aaa);
+    }
+
+    .auth-btn {
+      width: 100%;
+      padding: 1rem;
+      font-size: 1rem;
+      margin-top: 0.5rem;
+      border: none;
+      border-radius: var(--radius-md, 10px);
+      background: linear-gradient(135deg, #9333ea, #ec4899);
+      color: #fff;
+      font-family: var(--font-body, 'Inter', sans-serif);
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .auth-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0);
+      transition: background 0.3s ease;
+    }
+
+    .auth-btn:hover::before {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .auth-btn:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    .divider {
+      text-align: center;
+      margin: 1.5rem 0;
+      position: relative;
+      color: var(--clr-text-muted, #aaa);
+      font-size: 0.85rem;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 38%;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .divider::before {
+      left: 0;
+    }
+
+    .divider::after {
+      right: 0;
+    }
+
+    .login-link {
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--clr-text-muted, #aaa);
+    }
+
+    .login-link a {
+      color: #c084fc;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .login-link a:hover {
+      color: #fff;
+    }
+
+    .success-card {
+      display: none;
+      text-align: center;
+      padding: 2.5rem 1rem;
+      animation: fadeInUp 0.5s ease both;
+    }
+
+    .success-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #9333ea, #ec4899);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 1.8rem;
+    }
+
+    .success-card h2 {
+      font-family: var(--font-display, 'Playfair Display', serif);
+      font-size: 1.8rem;
+      margin-bottom: 0.6rem;
+      background: linear-gradient(135deg, #9333ea, #ec4899);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .success-card p {
+      color: var(--clr-text-muted, #aaa);
+      font-size: 0.95rem;
+    }
+
+    #toast-signup {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: rgba(20, 10, 35, 0.95);
+      border: 1px solid rgba(236, 72, 153, 0.4);
+      color: #f9a8d4;
+      padding: 0.9rem 1.8rem;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      z-index: 9999;
+      opacity: 0;
+      transition: all 0.4s ease;
+      white-space: nowrap;
+    }
+
+    #toast-signup.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Floating orbs */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+      animation: orbFloat 12s ease-in-out infinite;
+    }
+
+    .orb-1 {
+      width: 400px;
+      height: 400px;
+      background: rgba(147, 51, 234, 0.15);
+      top: -100px;
+      right: -100px;
+    }
+
+    .orb-2 {
+      width: 350px;
+      height: 350px;
+      background: rgba(236, 72, 153, 0.12);
+      bottom: -80px;
+      left: -80px;
+      animation-delay: -6s;
+    }
+
+    @keyframes orbFloat {
+
+      0%,
+      100% {
+        transform: translate(0, 0);
+      }
+
+      50% {
+        transform: translate(30px, -30px);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Loader -->
+  <div id="loader" class="loader">
+    <div class="loader-inner">
+      <div class="loader-logo">C</div>
+      <div class="loader-bar">
+        <div class="loader-fill"></div>
+      </div>
+      <p class="loader-text">Loading...</p>
+    </div>
+  </div>
+
+  <!-- Floating orbs -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <!-- Particles -->
+  <div class="page-particles" id="page-particles"></div>
+
+  <!-- Header -->
+  <header id="header" class="header">
+    <nav class="nav container">
+      <a href="index.html" class="nav-logo" aria-label="Chance Home">
+        <img src="assets/logo.jpg" alt="Chance Logo" class="logo-img"
+          onerror="this.style.display='none';document.getElementById('logo-text-nav').style.display='block'" />
+        <span class="logo-text" id="logo-text-nav" style="display:none;">✦ CHANCE</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="about.html" class="nav-link">About</a></li>
+        <li><a href="collection.html" class="nav-link">Collection</a></li>
+        <li><a href="story.html" class="nav-link">Our Story</a></li>
+        <li><a href="contact.html" class="nav-link">Contact</a></li>
+        <li><a href="login.html" class="nav-link">Account</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="btn-icon" id="search-btn" aria-label="Search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
+          </svg>
+        </button>
+        <button class="btn-icon cart-btn" id="cart-btn" aria-label="Cart">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <path d="M16 10a4 4 0 0 1-8 0" />
+          </svg>
+          <span class="cart-badge" id="cart-badge">0</span>
+        </button>
+        <button class="hamburger" id="hamburger" aria-label="Toggle Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="auth-section">
+      <div class="auth-container">
+
+        <!-- Sign Up Form -->
+        <div id="signup-view">
+          <div class="auth-header">
+            <span class="auth-logo">✦ CHANCE</span>
+            <h1 class="auth-title">Create Account</h1>
+            <p class="auth-subtitle">Join the world of elegance</p>
+          </div>
+
+          <form id="form-signup" novalidate>
+            <div class="form-group">
+              <label for="signup-name">Full Name</label>
+              <input type="text" id="signup-name" placeholder="Jane Doe" required autocomplete="name" />
+            </div>
+            <div class="form-group">
+              <label for="signup-email">Email Address</label>
+              <input type="email" id="signup-email" placeholder="you@example.com" required autocomplete="email" />
+            </div>
+            <div class="form-group">
+              <label for="signup-password">Password</label>
+              <input type="password" id="signup-password" placeholder="Min. 6 characters" required minlength="6"
+                autocomplete="new-password" />
+              <div class="password-strength">
+                <div class="password-strength-bar" id="strength-bar"></div>
+              </div>
+              <p class="strength-label" id="strength-label"></p>
+            </div>
+            <div class="form-group">
+              <label for="signup-confirm">Confirm Password</label>
+              <input type="password" id="signup-confirm" placeholder="Repeat password" required
+                autocomplete="new-password" />
+            </div>
+
+            <button type="submit" class="auth-btn" id="signup-btn">
+              Create Account ✦
+            </button>
+          </form>
+
+          <div class="divider">or</div>
+          <p class="login-link">Already have an account? <a href="login.html">Sign In</a></p>
+        </div>
+
+        <!-- Success State -->
+        <div class="success-card" id="success-view">
+          <div class="success-icon">✦</div>
+          <h2 id="success-name">Welcome!</h2>
+          <p>Your account has been created successfully.</p>
+          <p style="margin-top:0.4rem;font-size:0.85rem;">Redirecting you now...</p>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>© 2026 Chance. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <div id="toast-signup" role="alert"></div>
+
+  <script src="script.js"></script>
+  <script>
+    // Particles
+    const pContainer = document.getElementById('page-particles');
+    if (pContainer) {
+      for (let i = 0; i < 15; i++) {
+        const p = document.createElement('div');
+        p.className = 'page-particle';
+        p.style.cssText = `
+          width:${Math.random() * 8 + 4}px;
+          height:${Math.random() * 8 + 4}px;
+          left:${Math.random() * 100}vw;
+          background:${['#9333ea', '#ec4899', '#f59e0b'][Math.floor(Math.random() * 3)]};
+          animation-duration:${Math.random() * 10 + 10}s;
+          animation-delay:${Math.random() * 5}s;
+        `;
+        pContainer.appendChild(p);
+      }
+    }
+
+    // Toast helper
+    function showToastLocal(msg, isError = true) {
+      const t = document.getElementById('toast-signup');
+      t.textContent = msg;
+      t.style.borderColor = isError ? 'rgba(236,72,153,0.4)' : 'rgba(147,51,234,0.4)';
+      t.style.color = isError ? '#f9a8d4' : '#c084fc';
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3500);
+    }
+
+    // Password strength meter
+    const pwdInput = document.getElementById('signup-password');
+    const strengthBar = document.getElementById('strength-bar');
+    const strengthLabel = document.getElementById('strength-label');
+
+    pwdInput.addEventListener('input', () => {
+      const val = pwdInput.value;
+      let score = 0;
+      if (val.length >= 6) score++;
+      if (val.length >= 10) score++;
+      if (/[A-Z]/.test(val)) score++;
+      if (/[0-9]/.test(val)) score++;
+      if (/[^A-Za-z0-9]/.test(val)) score++;
+
+      const levels = [
+        { w: '0%', bg: 'transparent', label: '' },
+        { w: '25%', bg: '#ef4444', label: 'Weak' },
+        { w: '50%', bg: '#f97316', label: 'Fair' },
+        { w: '75%', bg: '#eab308', label: 'Good' },
+        { w: '100%', bg: 'linear-gradient(90deg,#9333ea,#ec4899)', label: 'Strong' },
+      ];
+      const lvl = levels[Math.min(score, 4)];
+      strengthBar.style.width = lvl.w;
+      strengthBar.style.background = lvl.bg;
+      strengthLabel.textContent = lvl.label;
+    });
+
+    // Form submission → POST /api/signup
+    document.getElementById('form-signup').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('signup-name').value.trim();
+      const email = document.getElementById('signup-email').value.trim();
+      const pass = document.getElementById('signup-password').value;
+      const confirm = document.getElementById('signup-confirm').value;
+
+      if (!name || !email || !pass) {
+        showToastLocal('Please fill in all fields.');
+        return;
+      }
+      if (pass !== confirm) {
+        showToastLocal('Passwords do not match.');
+        return;
+      }
+      if (pass.length < 6) {
+        showToastLocal('Password must be at least 6 characters.');
+        return;
+      }
+
+      const btn = document.getElementById('signup-btn');
+      btn.textContent = 'Creating account...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('http://localhost:5000/api/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, pass })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          localStorage.setItem('chance_currentUser', JSON.stringify({ name, email }));
+          document.getElementById('success-name').textContent = `Welcome, ${name}!`;
+          document.getElementById('signup-view').style.display = 'none';
+          document.getElementById('success-view').style.display = 'block';
+          setTimeout(() => { window.location.href = 'index.html'; }, 2000);
+        } else {
+          showToastLocal(data.message || 'Sign up failed. Try again.');
+        }
+      } catch (err) {
+        showToastLocal('Cannot reach server. Is the backend running?');
+      } finally {
+        btn.textContent = 'Create Account ✦';
+        btn.disabled = false;
+      }
+    });
+
+    // Redirect if already logged in
+    const currentUser = JSON.parse(localStorage.getItem('chance_currentUser'));
+    if (currentUser) {
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+
+</html>

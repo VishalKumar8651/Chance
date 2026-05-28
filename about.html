@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="About Chance — Discover our philosophy and team." />
+  <title>About Us — Chance</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="pages.css" />
+</head>
+<body>
+  <!-- Loader -->
+  <div id="loader" class="loader">
+    <div class="loader-inner">
+      <div class="loader-logo">C</div>
+      <div class="loader-bar"><div class="loader-fill"></div></div>
+      <p class="loader-text">Loading...</p>
+    </div>
+  </div>
+
+  <!-- Particles -->
+  <div class="page-particles" id="page-particles"></div>
+
+  <!-- Header -->
+  <header id="header" class="header">
+    <nav class="nav container">
+      <a href="index.html" class="nav-logo" aria-label="Chance Home">
+        <img src="assets/logo.jpg" alt="Chance Logo" class="logo-img" onerror="this.style.display='none';document.getElementById('logo-text').style.display='block'" />
+        <span class="logo-text" id="logo-text" style="display:none;">✦ CHANCE</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="about.html" class="nav-link active">About</a></li>
+        <li><a href="collection.html" class="nav-link">Collection</a></li>
+        <li><a href="story.html" class="nav-link">Our Story</a></li>
+        <li><a href="contact.html" class="nav-link">Contact</a></li>
+        <li><a href="login.html" class="nav-link">Account</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="btn-icon" id="search-btn" aria-label="Search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+        <button class="btn-icon cart-btn" id="cart-btn" aria-label="Cart">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="cart-badge" id="cart-badge">0</span>
+        </button>
+        <button class="hamburger" id="hamburger" aria-label="Toggle Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </nav>
+        <ul></ul>
+    </div>
+  </header>
+
+  <main>
+    <!-- Page Hero with Video -->
+    <section class="page-hero">
+      <video class="page-hero-video" autoplay loop muted playsinline poster="assets/girl.jpg">
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-girl-in-a-fashion-photoshoot-438-large.mp4" type="video/mp4">
+      </video>
+      <div class="page-hero-overlay"></div>
+      <div class="page-hero-content">
+        <span class="section-tag">Who We Are</span>
+        <h1>More than <em>Fashion</em></h1>
+        <div class="animated-divider"></div>
+        <p>We believe every woman deserves to feel extraordinary. Chance is a movement towards elegance, confidence, and sustainability.</p>
+        <div class="page-hero-breadcrumb">
+          <a href="index.html">Home</a> <span>/</span> <span>About</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Values Grid -->
+    <section class="values-section section">
+      <div class="container">
+        <div class="section-header pg-reveal">
+          <h2 class="section-title">Our Core <em>Values</em></h2>
+          <p class="section-subtitle">What drives us to create the extraordinary.</p>
+        </div>
+        <div class="values-grid">
+          <div class="value-card pg-reveal">
+            <div class="value-icon">🌸</div>
+            <h3>Curated with Care</h3>
+            <p>Every piece is handpicked by our expert stylists to ensure only the finest quality reaches you.</p>
+          </div>
+          <div class="value-card pg-reveal" style="transition-delay: 0.1s">
+            <div class="value-icon">💜</div>
+            <h3>Made for Women</h3>
+            <p>Designed by women, for women. Our silhouettes celebrate every body type, every story.</p>
+          </div>
+          <div class="value-card pg-reveal" style="transition-delay: 0.2s">
+            <div class="value-icon">🌍</div>
+            <h3>Sustainably Sourced</h3>
+            <p>We partner with ethical artisans worldwide to create fashion that doesn't cost the earth.</p>
+          </div>
+          <div class="value-card pg-reveal" style="transition-delay: 0.3s">
+            <div class="value-icon">✨</div>
+            <h3>Timeless Style</h3>
+            <p>Trends fade. Chance lasts. Our designs are crafted to be worn today, tomorrow, and forever.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="team-section section">
+      <div class="container">
+        <div class="section-header pg-reveal">
+          <span class="section-tag">The Minds</span>
+          <h2 class="section-title">Meet the <em>Team</em></h2>
+        </div>
+        <div class="team-grid">
+          <div class="team-card pg-reveal-scale">
+            <div class="team-avatar">I</div>
+            <h4>Isabella Rossi</h4>
+            <div class="team-role">Creative Director</div>
+            <p class="team-bio">With over 15 years in luxury fashion, Isabella brings a bold vision to every Chance collection.</p>
+          </div>
+          <div class="team-card pg-reveal-scale" style="transition-delay: 0.1s">
+            <div class="team-avatar">E</div>
+            <h4>Elena Santos</h4>
+            <div class="team-role">Head of Sustainability</div>
+            <p class="team-bio">Elena ensures our entire supply chain meets the highest ethical and environmental standards.</p>
+          </div>
+          <div class="team-card pg-reveal-scale" style="transition-delay: 0.2s">
+            <div class="team-avatar">M</div>
+            <h4>Maya Chen</h4>
+            <div class="team-role">Lead Stylist</div>
+            <p class="team-bio">Maya's eye for detail guarantees that every piece flatters and empowers the wearer.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Banner -->
+    <section class="cta-banner pg-reveal">
+      <div class="container">
+        <h2>Ready to Transform Your Wardrobe?</h2>
+        <p>Explore our latest collection and find the pieces that speak to you.</p>
+        <a href="collection.html" class="btn-primary btn-lg">Shop Now ✦</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="footer-logo">
+            <span class="logo-text">✦ CHANCE</span>
+          </a>
+          <p class="footer-tagline">Where elegance meets opportunity.</p>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Links</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="collection.html">Collection</a></li>
+            <li><a href="story.html">Our Story</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Chance. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    // Reveal script for new pages
+    const pgReveals = document.querySelectorAll('.pg-reveal, .pg-reveal-left, .pg-reveal-right, .pg-reveal-scale');
+    const pgObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          pgObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    pgReveals.forEach(el => pgObserver.observe(el));
+    
+    // Page particles
+    const pContainer = document.getElementById('page-particles');
+    if (pContainer) {
+      for(let i=0; i<15; i++) {
+        const p = document.createElement('div');
+        p.className = 'page-particle';
+        p.style.width = Math.random() * 8 + 4 + 'px';
+        p.style.height = p.style.width;
+        p.style.left = Math.random() * 100 + 'vw';
+        p.style.background = ['var(--clr-primary)', 'var(--clr-accent)', 'var(--clr-gold)'][Math.floor(Math.random()*3)];
+        p.style.animationDuration = Math.random() * 10 + 10 + 's';
+        p.style.animationDelay = Math.random() * 5 + 's';
+        pContainer.appendChild(p);
+      }
+    }
+  </script>
+</body>
+</html>

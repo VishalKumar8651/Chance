@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Collection — Discover the latest luxury fashion." />
+  <title>Collection — Chance</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="pages.css" />
+</head>
+<body>
+  <div id="loader" class="loader"><div class="loader-inner"><div class="loader-logo">C</div><div class="loader-bar"><div class="loader-fill"></div></div></div></div>
+
+  <!-- Product Modal from index -->
+  <div id="product-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Product Quick View">
+    <div class="modal-container">
+      <button class="modal-close" id="modal-close" aria-label="Close">&times;</button>
+      <div class="modal-inner">
+        <div class="modal-img-wrap">
+          <img id="modal-img" src="assets/girl.jpg" alt="Product" />
+          <div class="modal-img-glow"></div>
+          <span id="modal-badge" class="modal-badge"></span>
+        </div>
+        <div class="modal-details">
+          <span id="modal-category" class="modal-category"></span>
+          <h2 id="modal-name" class="modal-name"></h2>
+          <div class="modal-price-row">
+            <span id="modal-price" class="modal-price-current"></span>
+            <span id="modal-price-old" class="modal-price-old"></span>
+            <span id="modal-discount" class="modal-discount-badge"></span>
+          </div>
+          <p id="modal-desc" class="modal-desc"></p>
+          <div class="modal-sizes">
+            <p class="modal-label">Select Size</p>
+            <div class="size-grid">
+              <button class="size-btn active">XS</button>
+              <button class="size-btn">S</button>
+              <button class="size-btn">M</button>
+              <button class="size-btn">L</button>
+              <button class="size-btn">XL</button>
+            </div>
+          </div>
+          <div class="modal-colors">
+            <p class="modal-label">Select Color</p>
+            <div class="color-swatches">
+              <button class="color-swatch active" style="background:#9333ea"></button>
+              <button class="color-swatch" style="background:#ec4899"></button>
+            </div>
+          </div>
+          <div class="modal-qty">
+            <p class="modal-label">Quantity</p>
+            <div class="qty-control">
+              <button class="qty-btn" id="qty-minus">−</button>
+              <span id="qty-display">1</span>
+              <button class="qty-btn" id="qty-plus">+</button>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button class="btn-primary btn-lg modal-add-cart" id="modal-add-cart">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart Drawer from index -->
+  <div id="cart-drawer" class="cart-drawer">
+    <div class="cart-drawer-header">
+      <h3>Your Cart <span id="cart-count-label">(0)</span></h3>
+      <button class="cart-close" id="cart-close">&times;</button>
+    </div>
+    <div id="cart-items" class="cart-items">
+      <div class="cart-empty">
+        <div class="cart-empty-icon">🛍️</div>
+        <p>Your cart is empty</p>
+      </div>
+    </div>
+    <div class="cart-footer" id="cart-footer" style="display:none">
+      <div class="cart-total"><span>Total</span><span id="cart-total-price">₹0</span></div>
+      <button class="btn-primary btn-lg" style="width:100%" onclick="handleCheckout()">Checkout ✦</button>
+    </div>
+  </div>
+  <div id="cart-overlay-bg" class="cart-overlay-bg"></div>
+
+  <!-- Header -->
+  <header id="header" class="header">
+    <nav class="nav container">
+      <a href="index.html" class="nav-logo" aria-label="Chance Home">
+        <img src="assets/logo.jpg" alt="Chance Logo" class="logo-img" onerror="this.style.display='none';document.getElementById('logo-text').style.display='block'" />
+        <span class="logo-text" id="logo-text" style="display:none;">✦ CHANCE</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="about.html" class="nav-link">About</a></li>
+        <li><a href="collection.html" class="nav-link active">Collection</a></li>
+        <li><a href="story.html" class="nav-link">Our Story</a></li>
+        <li><a href="contact.html" class="nav-link">Contact</a></li>
+        <li><a href="login.html" class="nav-link">Account</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="btn-icon cart-btn" id="cart-btn" aria-label="Cart">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="cart-badge" id="cart-badge">0</span>
+        </button>
+        <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+      </div>
+    </nav>
+
+      <ul>
+        <li><a href="index.html" class="mobile-nav-link">Home</a></li>
+        <li><a href="about.html" class="mobile-nav-link">About</a></li>
+        <li><a href="collection.html" class="mobile-nav-link">Collection</a></li>
+        <li><a href="story.html" class="mobile-nav-link">Our Story</a></li>
+        <li><a href="contact.html" class="mobile-nav-link">Contact</a></li>
+        <li><a href="login.html" class="mobile-nav-link">Account</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <video class="page-hero-video" autoplay loop muted playsinline poster="assets/girl.jpg">
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-woman-posing-for-the-camera-in-a-studio-with-439-large.mp4" type="video/mp4">
+      </video>
+      <div class="page-hero-overlay"></div>
+      <div class="page-hero-content">
+        <span class="section-tag">Explore</span>
+        <h1>The <em>Collection</em></h1>
+        <div class="animated-divider"></div>
+        <p>Discover pieces that tell her story — wherever she goes, whatever she does.</p>
+        <div class="page-hero-breadcrumb">
+          <a href="index.html">Home</a> <span>/</span> <span>Collection</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Categories Grid -->
+    <section class="collection-categories">
+      <div class="container">
+        <div class="section-header pg-reveal">
+          <h2 class="section-title">Shop by <em>Category</em></h2>
+        </div>
+        <div class="cat-grid">
+          <div class="cat-card pg-reveal" onclick="filterCollection('evening')">
+            <div class="cat-card-bg" style="background-image: url('assets/Comatozze%20%F0%9F%A5%B5%20The%20Angel%20%F0%9F%98%87.jpg')"></div>
+            <div class="cat-card-overlay"></div>
+            <div class="cat-card-content">
+              <h3>Evening Wear</h3>
+              <span>12 Styles</span>
+            </div>
+          </div>
+          <div class="cat-card pg-reveal" style="transition-delay: 0.1s" onclick="filterCollection('luxury')">
+            <div class="cat-card-bg" style="background-image: url('assets/Uma%20North.jpg')"></div>
+            <div class="cat-card-overlay"></div>
+            <div class="cat-card-content">
+              <h3>Luxury Series</h3>
+              <span>8 Styles</span>
+            </div>
+          </div>
+          <div class="cat-card pg-reveal" style="transition-delay: 0.2s" onclick="filterCollection('casual')">
+            <div class="cat-card-bg" style="background-image: url('assets/Beautiful%20Casual%20Dresses.jpg')"></div>
+            <div class="cat-card-overlay"></div>
+            <div class="cat-card-content">
+              <h3>Casual Chic</h3>
+              <span>24 Styles</span>
+            </div>
+          </div>
+          <div class="cat-card pg-reveal" style="transition-delay: 0.3s" onclick="filterCollection('bridal')">
+            <div class="cat-card-bg" style="background-image: url('assets/cute%20simile.jpg')"></div>
+            <div class="cat-card-overlay"></div>
+            <div class="cat-card-content">
+              <h3>Bridal</h3>
+              <span>6 Styles</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Full Collection -->
+    <section class="collection-full section" id="collection">
+      <div class="container">
+        <div class="collection-filters pg-reveal">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="evening">Evening</button>
+          <button class="filter-btn" data-filter="casual">Casual</button>
+          <button class="filter-btn" data-filter="luxury">Luxury</button>
+          <button class="filter-btn" data-filter="bridal">Bridal</button>
+        </div>
+
+        <div class="collection-full-grid" id="collection-grid">
+          <!-- Inject products here. For demo, we copy the 8 from index -->
+          <!-- 1 -->
+          <div class="product-card card-3d pg-reveal" data-category="evening"
+            data-name="Midnight Bloom Gown"
+            data-category-label="Evening Collection"
+            data-price="₹4,999" data-old="₹7,499" data-discount="33% OFF"
+            data-badge="New"
+            data-desc="An enchanting floor-length gown with a deep-plunge neckline and shimmering midnight blue fabric.">
+            <div class="product-img-wrap">
+              <img src="assets/Comatozze%20%F0%9F%A5%B5%20The%20Angel%20%F0%9F%98%87.jpg" alt="Midnight Bloom Gown" class="product-img" />
+              <div class="product-overlay"><button class="btn-primary quick-view-btn">Quick View</button></div>
+              <span class="product-badge">New</span>
+            </div>
+            <div class="product-info">
+              <h4>Midnight Bloom Gown</h4><p>Evening Collection</p>
+              <div class="product-price"><span class="price">₹4,999</span><span class="price-old">₹7,499</span></div>
+            </div>
+          </div>
+          <!-- 2 -->
+          <div class="product-card card-3d pg-reveal" data-category="luxury"
+            data-name="Golden Hour Ensemble"
+            data-category-label="Luxury Collection"
+            data-price="₹8,999" data-old="₹12,999" data-discount="30% OFF"
+            data-badge="✦ Star"
+            data-desc="The crown jewel of our 2026 collection. A sculpted golden silk ensemble.">
+            <div class="product-img-wrap">
+              <img src="assets/Uma%20North.jpg" alt="Golden Hour Ensemble" class="product-img" />
+              <div class="product-overlay"><button class="btn-primary quick-view-btn">Quick View</button></div>
+              <span class="product-badge badge-gold">✦ Star</span>
+            </div>
+            <div class="product-info">
+              <h4>Golden Hour Ensemble</h4><p>Luxury Collection</p>
+              <div class="product-price"><span class="price">₹8,999</span><span class="price-old">₹12,999</span></div>
+            </div>
+          </div>
+          <!-- 3 -->
+          <div class="product-card card-3d pg-reveal" data-category="casual"
+            data-name="Breezy Summer Set"
+            data-category-label="Casual Collection"
+            data-price="₹2,499" data-old="₹3,999" data-discount="37% OFF"
+            data-badge="Sale"
+            data-desc="Light, airy and effortlessly chic. This two-piece summer co-ord in breathable linen blends comfort with contemporary style.">
+            <div class="product-img-wrap">
+              <img src="assets/Beautiful%20Casual%20Dresses.jpg" alt="Breezy Summer Set" class="product-img" />
+              <div class="product-overlay"><button class="btn-primary quick-view-btn">Quick View</button></div>
+              <span class="product-badge badge-pink">Sale</span>
+            </div>
+            <div class="product-info">
+              <h4>Breezy Summer Set</h4><p>Casual Collection</p>
+              <div class="product-price"><span class="price">₹2,499</span><span class="price-old">₹3,999</span></div>
+            </div>
+          </div>
+          <!-- 4 -->
+          <div class="product-card card-3d pg-reveal" data-category="evening"
+            data-name="Rose Petal Couture"
+            data-category-label="Evening Collection"
+            data-price="₹6,499" data-old="₹9,999" data-discount="35% OFF"
+            data-badge=""
+            data-desc="A dreamy rose-blush couture gown adorned with handcrafted petal appliqués.">
+            <div class="product-img-wrap">
+              <img src="assets/cute%20simile.jpg" alt="Rose Petal Couture" class="product-img" />
+              <div class="product-overlay"><button class="btn-primary quick-view-btn">Quick View</button></div>
+            </div>
+            <div class="product-info">
+              <h4>Rose Petal Couture</h4><p>Evening Collection</p>
+              <div class="product-price"><span class="price">₹6,499</span><span class="price-old">₹9,999</span></div>
+            </div>
+          </div>
+          <!-- 5 -->
+          <div class="product-card card-3d pg-reveal" data-category="bridal"
+            data-name="Ivory Dreams Bridal"
+            data-category-label="Bridal Collection"
+            data-price="₹18,999" data-old="₹24,999" data-discount="24% OFF"
+            data-badge="Bridal"
+            data-desc="Your dream wedding dress, reimagined. Ivory duchess satin with intricate lace detailing.">
+            <div class="product-img-wrap">
+              <img src="assets/Comatozze%20%F0%9F%A5%B5%20The%20Angel%20%F0%9F%98%87.jpg" alt="Ivory Dreams Bridal" class="product-img" />
+              <div class="product-overlay"><button class="btn-primary quick-view-btn">Quick View</button></div>
+              <span class="product-badge badge-bridal">Bridal</span>
+            </div>
+            <div class="product-info">
+              <h4>Ivory Dreams Bridal</h4><p>Bridal Collection</p>
+              <div class="product-price"><span class="price">₹18,999</span><span class="price-old">₹24,999</span></div>
+            </div>
+          </div>
+          <!-- 6 -->
+          <div class="product-card card-3d pg-reveal" data-category="luxury"
+            data-name="Velvet Noir Gown"
+            data-category-label="Luxury Collection"
+            data-price="₹11,499" data-old="₹16,999" data-discount="32% OFF"
+            data-badge="Luxury"
+            data-desc="Pure indulgence in deep midnight velvet. This fitted column gown with a thigh-high slit and dramatic off-shoulder neckline is crafted for women who don't just enter rooms — they own them.">
+            <div class="product-img-wrap">
+              <img src="assets/Uma%20North.jpg" alt="Velvet Noir Gown" class="product-img" />
+              <div class="product-overlay"><button class="btn-primary quick-view-btn">Quick View</button></div>
+              <span class="product-badge badge-gold">Luxury</span>
+            </div>
+            <div class="product-info">
+              <h4>Velvet Noir Gown</h4><p>Luxury Collection</p>
+              <div class="product-price"><span class="price">₹11,499</span><span class="price-old">₹16,999</span></div>
+            </div>
+          </div>
+          <!-- 7 -->
+          <div class="product-card card-3d pg-reveal" data-category="casual"
+            data-name="Sunday Bloom Dress"
+            data-category-label="Casual Collection"
+            data-price="₹1,999" data-old="₹2,999" data-discount="33% OFF"
+            data-badge="Best Seller"
+            data-desc="The dress you'll reach for every Sunday. A flowy midi dress in a floral print.">
+            <div class="product-img-wrap">
+              <img src="assets/Beautiful%20Casual%20Dresses.jpg" alt="Sunday Bloom Dress" class="product-img" />
+              <div class="product-overlay"><button class="btn-primary quick-view-btn">Quick View</button></div>
+              <span class="product-badge badge-pink">Best Seller</span>
+            </div>
+            <div class="product-info">
+              <h4>Sunday Bloom Dress</h4><p>Casual Collection</p>
+              <div class="product-price"><span class="price">₹1,999</span><span class="price-old">₹2,999</span></div>
+            </div>
+          </div>
+          <!-- 8 -->
+          <div class="product-card card-3d pg-reveal" data-category="bridal"
+            data-name="Blush Ceremony Lehenga"
+            data-category-label="Bridal Collection"
+            data-price="₹22,999" data-old="₹31,999" data-discount="28% OFF"
+            data-badge="New"
+            data-desc="A breathtaking blush pink lehenga set embroidered with real zari thread and mirror work.">
+            <div class="product-img-wrap">
+              <img src="assets/cute%20simile.jpg" alt="Blush Ceremony Lehenga" class="product-img" />
+              <div class="product-overlay"><button class="btn-primary quick-view-btn">Quick View</button></div>
+              <span class="product-badge">New</span>
+            </div>
+            <div class="product-info">
+              <h4>Blush Ceremony Lehenga</h4><p>Bridal Collection</p>
+              <div class="product-price"><span class="price">₹22,999</span><span class="price-old">₹31,999</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="footer-logo">
+            <span class="logo-text">✦ CHANCE</span>
+          </a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Chance. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    const pgReveals = document.querySelectorAll('.pg-reveal');
+    const pgObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          pgObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    pgReveals.forEach(el => pgObserver.observe(el));
+  </script>
+</body>
+</html>

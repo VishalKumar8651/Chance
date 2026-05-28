@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Login / Sign Up to Chance — Access your account." />
+  <title>Account — Chance</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="pages.css" />
+  <style>
+    /* Auth Page Styles */
+    .auth-section {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: calc(var(--header-h) + 2rem) 1rem 4rem;
+      position: relative;
+      overflow: hidden;
+      background: radial-gradient(circle at top right, rgba(147, 51, 234, 0.1), transparent 50%),
+                  radial-gradient(circle at bottom left, rgba(236, 72, 153, 0.1), transparent 50%);
+    }
+
+    .auth-container {
+      width: 100%;
+      max-width: 450px;
+      background: rgba(13, 9, 20, 0.6);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-xl);
+      padding: 3rem 2.5rem;
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 40px rgba(147, 51, 234, 0.15);
+      animation: fadeInUp 0.6s ease both;
+    }
+
+    .auth-container::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: var(--radius-xl);
+      background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+      z-index: -1;
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .auth-title {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+      background: var(--gradient-main);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .auth-subtitle {
+      color: var(--clr-text-muted);
+      font-size: 0.95rem;
+    }
+
+    .auth-toggle {
+      display: flex;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: var(--radius-lg);
+      padding: 0.3rem;
+      margin-bottom: 2rem;
+    }
+
+    .auth-toggle-btn {
+      flex: 1;
+      padding: 0.8rem;
+      background: transparent;
+      border: none;
+      color: var(--clr-text-muted);
+      font-family: var(--font-body);
+      font-weight: 500;
+      font-size: 0.95rem;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .auth-toggle-btn.active {
+      background: var(--clr-surface);
+      color: var(--clr-text);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .auth-form {
+      display: none;
+      animation: fadeIn 0.4s ease both;
+    }
+
+    .auth-form.active {
+      display: block;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: var(--clr-text);
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 1rem 1.2rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-md);
+      color: var(--clr-text);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      transition: var(--transition);
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--clr-primary);
+      box-shadow: 0 0 15px rgba(147, 51, 234, 0.2);
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .form-options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      font-size: 0.85rem;
+    }
+
+    .form-options label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      color: var(--clr-text-muted);
+    }
+
+    .forgot-link {
+      color: var(--clr-primary-lt);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .forgot-link:hover {
+      color: #fff;
+      text-shadow: 0 0 8px rgba(147, 51, 234, 0.5);
+    }
+
+    .auth-btn {
+      width: 100%;
+      padding: 1rem;
+      font-size: 1rem;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .success-message {
+      display: none;
+      text-align: center;
+      color: var(--clr-primary-lt);
+      padding: 2rem;
+      background: rgba(147, 51, 234, 0.1);
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(147, 51, 234, 0.3);
+      animation: fadeIn 0.4s ease both;
+    }
+  </style>
+</head>
+<body>
+  <!-- Loader -->
+  <div id="loader" class="loader">
+    <div class="loader-inner">
+      <div class="loader-logo">C</div>
+      <div class="loader-bar"><div class="loader-fill"></div></div>
+      <p class="loader-text">Loading...</p>
+    </div>
+  </div>
+
+  <!-- Particles -->
+  <div class="page-particles" id="page-particles"></div>
+
+  <!-- Header -->
+  <header id="header" class="header">
+    <nav class="nav container">
+      <a href="index.html" class="nav-logo" aria-label="Chance Home">
+        <img src="assets/logo.jpg" alt="Chance Logo" class="logo-img" onerror="this.style.display='none';document.getElementById('logo-text').style.display='block'" />
+        <span class="logo-text" id="logo-text" style="display:none;">✦ CHANCE</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="about.html" class="nav-link">About</a></li>
+        <li><a href="collection.html" class="nav-link">Collection</a></li>
+        <li><a href="story.html" class="nav-link">Our Story</a></li>
+        <li><a href="contact.html" class="nav-link">Contact</a></li>
+        <li><a href="login.html" class="nav-link active">Account</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="btn-icon" id="search-btn" aria-label="Search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+        <button class="btn-icon cart-btn" id="cart-btn" aria-label="Cart">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="cart-badge" id="cart-badge">0</span>
+        </button>
+        <button class="hamburger" id="hamburger" aria-label="Toggle Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </nav>
+      <ul>
+        
+      </ul>
+    </div>
+  </header>
+
+  <main>
+    <section class="auth-section">
+      <div class="auth-container">
+        <div class="auth-header">
+          <h1 class="auth-title">Welcome</h1>
+          <p class="auth-subtitle">Elegance meets opportunity.</p>
+        </div>
+
+        <div class="auth-toggle">
+          <button class="auth-toggle-btn active" id="btn-show-login">Login</button>
+          <button class="auth-toggle-btn" id="btn-show-signup">Sign Up</button>
+        </div>
+
+        <!-- Login Form -->
+        <form class="auth-form active" id="form-login">
+          <div class="form-group">
+            <label for="login-email">Email Address</label>
+            <input type="email" id="login-email" placeholder="you@example.com" required />
+          </div>
+          <div class="form-group">
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" placeholder="••••••••" required />
+          </div>
+          <div class="form-options">
+            <label>
+              <input type="checkbox" id="login-remember" /> Remember me
+            </label>
+            <a href="#" class="forgot-link">Forgot password?</a>
+          </div>
+          <button type="submit" class="btn-primary auth-btn">Sign In ✦</button>
+        </form>
+
+        <!-- Sign Up Form -->
+        <form class="auth-form" id="form-signup">
+          <div class="form-group">
+            <label for="signup-name">Full Name</label>
+            <input type="text" id="signup-name" placeholder="Jane Doe" required />
+          </div>
+          <div class="form-group">
+            <label for="signup-email">Email Address</label>
+            <input type="email" id="signup-email" placeholder="you@example.com" required />
+          </div>
+          <div class="form-group">
+            <label for="signup-password">Password</label>
+            <input type="password" id="signup-password" placeholder="••••••••" required minlength="6" />
+          </div>
+          <button type="submit" class="btn-primary auth-btn">Create Account ✦</button>
+        </form>
+
+        <div class="success-message" id="success-msg">
+          <h3 style="margin-bottom: 0.5rem;">Welcome back!</h3>
+          <p>Redirecting to homepage...</p>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="footer-logo">
+            <span class="logo-text">✦ CHANCE</span>
+          </a>
+          <p class="footer-tagline">Where elegance meets opportunity.</p>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Links</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="collection.html">Collection</a></li>
+            <li><a href="story.html">Our Story</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Chance. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast -->
+  <div id="toast" class="toast" role="alert" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+  <script>
+    // Page particles
+    const pContainer = document.getElementById('page-particles');
+    if (pContainer) {
+      for(let i=0; i<15; i++) {
+        const p = document.createElement('div');
+        p.className = 'page-particle';
+        p.style.width = Math.random() * 8 + 4 + 'px';
+        p.style.height = p.style.width;
+        p.style.left = Math.random() * 100 + 'vw';
+        p.style.background = ['var(--clr-primary)', 'var(--clr-accent)', 'var(--clr-gold)'][Math.floor(Math.random()*3)];
+        p.style.animationDuration = Math.random() * 10 + 10 + 's';
+        p.style.animationDelay = Math.random() * 5 + 's';
+        pContainer.appendChild(p);
+      }
+    }
+
+    // Toggle forms
+    const btnLogin = document.getElementById('btn-show-login');
+    const btnSignup = document.getElementById('btn-show-signup');
+    const formLogin = document.getElementById('form-login');
+    const formSignup = document.getElementById('form-signup');
+    const successMsg = document.getElementById('success-msg');
+
+    btnLogin.addEventListener('click', () => {
+      btnLogin.classList.add('active');
+      btnSignup.classList.remove('active');
+      formLogin.classList.add('active');
+      formSignup.classList.remove('active');
+      successMsg.style.display = 'none';
+    });
+
+    btnSignup.addEventListener('click', () => {
+      btnSignup.classList.add('active');
+      btnLogin.classList.remove('active');
+      formSignup.classList.add('active');
+      formLogin.classList.remove('active');
+      successMsg.style.display = 'none';
+    });
+
+    // Handle Signup
+    formSignup.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('signup-name').value;
+      const email = document.getElementById('signup-email').value;
+      const pass = document.getElementById('signup-password').value;
+
+      const btn = formSignup.querySelector('button[type="submit"]');
+      const originalText = btn.textContent;
+      btn.textContent = 'Creating...';
+      btn.disabled = true;
+
+      try {
+        const response = await fetch('http://localhost:5000/api/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, pass })
+        });
+        const data = await response.json();
+
+        if (data.success) {
+          // Log them in immediately
+          localStorage.setItem('chance_currentUser', JSON.stringify({ name, email }));
+          
+          formSignup.style.display = 'none';
+          document.querySelector('.auth-toggle').style.display = 'none';
+          successMsg.innerHTML = `<h3 style="margin-bottom: 0.5rem;">Welcome, ${name}!</h3><p>Your account has been created.</p>`;
+          successMsg.style.display = 'block';
+          
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 2000);
+        } else {
+          if(window.showToast) window.showToast(data.message || 'Error signing up');
+          else alert(data.message || 'Error signing up');
+        }
+      } catch (err) {
+        if(window.showToast) window.showToast('Server error. Is the backend running?');
+        else alert('Server error. Is the backend running?');
+      } finally {
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }
+    });
+
+    // Handle Login
+    formLogin.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value;
+      const pass = document.getElementById('login-password').value;
+
+      const btn = formLogin.querySelector('button[type="submit"]');
+      const originalText = btn.textContent;
+      btn.textContent = 'Signing in...';
+      btn.disabled = true;
+
+      try {
+        const response = await fetch('http://localhost:5000/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, pass })
+        });
+        const data = await response.json();
+
+        if (data.success) {
+          localStorage.setItem('chance_currentUser', JSON.stringify({ name: data.user.name, email: data.user.email }));
+          formLogin.style.display = 'none';
+          document.querySelector('.auth-toggle').style.display = 'none';
+          successMsg.innerHTML = `<h3 style="margin-bottom: 0.5rem;">Welcome back, ${data.user.name}!</h3><p>Redirecting...</p>`;
+          successMsg.style.display = 'block';
+          
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 1500);
+        } else {
+          if(window.showToast) window.showToast(data.message || 'Invalid email or password.');
+          else alert(data.message || 'Invalid email or password.');
+        }
+      } catch (err) {
+        if(window.showToast) window.showToast('Server error. Is the backend running?');
+        else alert('Server error. Is the backend running?');
+      } finally {
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }
+    });
+
+    // Show logout option if already logged in
+    const currentUser = JSON.parse(localStorage.getItem('chance_currentUser'));
+    if(currentUser) {
+      formLogin.style.display = 'none';
+      formSignup.style.display = 'none';
+      document.querySelector('.auth-toggle').style.display = 'none';
+      successMsg.innerHTML = `<h3 style="margin-bottom: 0.5rem;">Welcome, ${currentUser.name}!</h3>
+                              <p>You are already logged in.</p>
+                              <button class="btn-primary auth-btn" style="margin-top:1rem;" onclick="localStorage.removeItem('chance_currentUser'); window.location.reload();">Log Out</button>`;
+      successMsg.style.display = 'block';
+    }
+  </script>
+</body>
+</html>
