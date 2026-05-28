@@ -18,13 +18,13 @@ Chance is a modern, animated fashion e‑commerce showcase built with a **rich, 
 | | Search overlay | Full‑screen search with live results powered by a static product list.
 | **Product Gallery** | Filterable collection | Category filters, view‑all toggle, and animated product cards.
 | | Quick‑view modal | Click a product to open a detailed modal (size, quantity, add‑to‑cart).
-| **User System** | Sign‑up & login | Backend endpoints `/api/signup` and `/api/login` with password storage (plaintext for demo, replace with bcrypt for production).
-| | Persistent session | Current user stored in `localStorage` and used to load cart.
+| **User System** | Sign‑up & login | Backend endpoints `/api/signup` and `/api/login` with `bcrypt` password hashing and JWT token issuance.
+| | Persistent session | User profile and JWT token are stored in `localStorage` for authenticated cart access.
 | **Cart** | Client‑side cart UI | Add, remove, update quantity, checkout toast.
 | | **Server‑side persistence** | Cart saved per user in MongoDB (`carts` collection) via `/api/cart` endpoints.  Cart survives logout and page reloads.
 | **Backend** | Node.js + Express | Handles API routes, CORS, JSON body parsing.
 | | MongoDB Atlas | Cloud‑hosted database; connection uses **Stable API v1** (`ServerApiVersion`).
-| | Environment variables | `.env` stores `MONGODB_URI` and `PORT`.
+| | Environment variables | `.env` stores `MONGODB_URI`, `JWT_SECRET`, and `PORT`.
 | **Performance & SEO** | Semantic HTML5, proper headings, descriptive meta tags (you can add `<title>` and `<meta description>` per page). |
 | | Optimized assets | Lazy‑loaded images (via `loading="lazy"` if added), CSS minification possible.
 
@@ -84,11 +84,11 @@ Chance is a modern, animated fashion e‑commerce showcase built with a **rich, 
 |--------|----------|---------------|-------------|
 | `POST` | `/api/signup` | `{ name, email, pass }` | Registers a new user.
 | `POST` | `/api/login` | `{ email, pass }` | Authenticates a user.
-| `GET` | `/api/cart/:email` | — | Returns saved cart items for the given email.
-| `POST` | `/api/cart` | `{ email, items: [] }` | Upserts the whole cart for the user.
-| `DELETE` | `/api/cart/:email/:index` | — | Removes the cart item at `index`.
+| `GET` | `/api/cart` | Auth header required | Returns saved cart items for the authenticated user.
+| `POST` | `/api/cart` | `{ items: [] }` + Auth header | Upserts the whole cart for the authenticated user.
+| `DELETE` | `/api/cart/:index` | Auth header required | Removes the cart item at `index` for the authenticated user.
 
-> **Note**: For production, replace plain‑text passwords with hashed values (e.g., `bcrypt`).
+> **Security note**: Keep `.env` private, rotate secrets immediately if exposed, and always use a strong `JWT_SECRET`.
 
 ---
 
@@ -114,8 +114,8 @@ Chance/
 
 ## 📈 Future Improvements
 
-- **Password security** – integrate `bcrypt` for hashing and salting.
-- **JWT authentication** – replace localStorage user flag with signed tokens.
+- **Refresh token flow** – add refresh/rotation support for long-lived secure sessions.
+- **HttpOnly cookies** – move JWT from `localStorage` to secure cookies for stronger XSS protection.
 - **Payment gateway** – add Stripe/PayPal integration for real checkout.
 - **Product data** – move product list from hard‑coded array to a `products` collection.
 - **Responsive design polishing** – fine‑tune mobile breakpoints and lazy‑load images.

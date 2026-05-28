@@ -276,7 +276,7 @@
           </div>
           <div class="form-group">
             <label for="signup-password">Password</label>
-            <input type="password" id="signup-password" placeholder="••••••••" required minlength="6" />
+            <input type="password" id="signup-password" placeholder="••••••••" required minlength="8" />
           </div>
           <button type="submit" class="btn-primary auth-btn">Create Account ✦</button>
         </form>
@@ -383,6 +383,7 @@
         if (data.success) {
           // Log them in immediately
           localStorage.setItem('chance_currentUser', JSON.stringify({ name, email }));
+          if (data.token) localStorage.setItem('chance_authToken', data.token);
           
           formSignup.style.display = 'none';
           document.querySelector('.auth-toggle').style.display = 'none';
@@ -426,6 +427,7 @@
 
         if (data.success) {
           localStorage.setItem('chance_currentUser', JSON.stringify({ name: data.user.name, email: data.user.email }));
+          if (data.token) localStorage.setItem('chance_authToken', data.token);
           formLogin.style.display = 'none';
           document.querySelector('.auth-toggle').style.display = 'none';
           successMsg.innerHTML = `<h3 style="margin-bottom: 0.5rem;">Welcome back, ${data.user.name}!</h3><p>Redirecting...</p>`;
@@ -455,7 +457,7 @@
       document.querySelector('.auth-toggle').style.display = 'none';
       successMsg.innerHTML = `<h3 style="margin-bottom: 0.5rem;">Welcome, ${currentUser.name}!</h3>
                               <p>You are already logged in.</p>
-                              <button class="btn-primary auth-btn" style="margin-top:1rem;" onclick="localStorage.removeItem('chance_currentUser'); window.location.reload();">Log Out</button>`;
+                              <button class="btn-primary auth-btn" style="margin-top:1rem;" onclick="localStorage.removeItem('chance_currentUser'); localStorage.removeItem('chance_authToken'); window.location.reload();">Log Out</button>`;
       successMsg.style.display = 'block';
     }
   </script>

@@ -300,15 +300,29 @@ function getCurrentUser() {
   } catch { return null; }
 }
 
+function getAuthToken() {
+  return localStorage.getItem('chance_authToken');
+}
+
+function getAuthHeaders() {
+  const token = getAuthToken();
+  if (!token) return null;
+  return {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`
+  };
+}
+
 // Save cart to MongoDB (for logged-in users)
 async function syncCartToServer() {
   const user = getCurrentUser();
-  if (!user || !user.email) return;
+  const headers = getAuthHeaders();
+  if (!user || !headers) return;
   try {
     await fetch(`${API_BASE}/api/cart`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: user.email, items: cartItems })
+      headers,
+      body: JSON.stringify({ items: cartItems })
     });
   } catch (err) {
     console.warn('Could not sync cart to server:', err);
@@ -318,9 +332,15 @@ async function syncCartToServer() {
 // Load cart from MongoDB (for logged-in users)
 async function loadCartFromServer() {
   const user = getCurrentUser();
-  if (!user || !user.email) return;
+  const headers = getAuthHeaders();
+  if (!user || !headers) return;
   try {
-    const res = await fetch(`${API_BASE}/api/cart/${encodeURIComponent(user.email)}`);
+    const res = await fetch(`${API_BASE}/api/cart`, { headers });
+    if (res.status === 401) {
+      localStorage.removeItem('chance_authToken');
+      localStorage.removeItem('chance_currentUser');
+      return;
+    }
     const data = await res.json();
     if (data.success && Array.isArray(data.items)) {
       cartItems = data.items;
