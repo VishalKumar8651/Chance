@@ -46,7 +46,8 @@ function authenticate(req, res, next) {
   }
 }
 
-const { SEED_PRODUCTS, formatProduct } = require('./data/products-seed');
+const { SEED_PRODUCTS, formatProduct, toImageBuffer } = require('./data/products-seed');
+const { prepareSeedProducts, loadImageForSeed } = require('./data/load-product-images');
 
 const client = uri
   ? new MongoClient(uri, {
@@ -64,10 +65,34 @@ async function seedProductsIfEmpty(productsCollection) {
   const count = await productsCollection.countDocuments();
   if (count === 0) {
     const now = new Date();
-    await productsCollection.insertMany(
-      SEED_PRODUCTS.map((product) => ({ ...product, createdAt: now }))
+    const products = prepareSeedProducts(SEED_PRODUCTS).map((product) => ({
+      ...product,
+      createdAt: now,
+    }));
+    await productsCollection.insertMany(products);
+    console.log(`Seeded ${products.length} products (with images) into MongoDB`);
+  }
+}
+
+async function syncProductImages(productsCollection) {
+  for (const seed of SEED_PRODUCTS) {
+    const doc = await productsCollection.findOne({ sortOrder: seed.sortOrder });
+    if (!doc || doc.imageData) continue;
+
+    const withImage = loadImageForSeed(seed);
+    if (!withImage.imageData) continue;
+
+    await productsCollection.updateOne(
+      { _id: doc._id },
+      {
+        $set: {
+          imageFile: withImage.imageFile,
+          imageData: withImage.imageData,
+          imageContentType: withImage.imageContentType,
+        },
+        $unset: { image: '' },
+      }
     );
-    console.log(`Seeded ${SEED_PRODUCTS.length} products into MongoDB`);
   }
 }
 
@@ -85,6 +110,31 @@ function registerRoutes(usersCollection, cartsCollection, productsCollection) {
     } catch (err) {
       console.error('Error fetching products:', err);
       res.status(500).json({ success: false, message: 'Failed to fetch products.' });
+    }
+  });
+
+  app.get('/api/products/:id/image', async (req, res) => {
+    try {
+      if (!ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ success: false, message: 'Invalid product id.' });
+      }
+
+      const doc = await productsCollection.findOne(
+        { _id: new ObjectId(req.params.id) },
+        { projection: { imageData: 1, imageContentType: 1 } }
+      );
+
+      if (!doc?.imageData) {
+        return res.status(404).json({ success: false, message: 'Product image not found.' });
+      }
+
+      const buffer = toImageBuffer(doc.imageData);
+      res.set('Content-Type', doc.imageContentType || 'image/jpeg');
+      res.set('Cache-Control', 'public, max-age=86400');
+      res.send(buffer);
+    } catch (err) {
+      console.error('Error fetching product image:', err);
+      res.status(500).json({ success: false, message: 'Failed to fetch product image.' });
     }
   });
 
@@ -246,6 +296,7 @@ async function initialize() {
   const db = client.db('chance_db');
   const productsCollection = db.collection('products');
   await seedProductsIfEmpty(productsCollection);
+  await syncProductImages(productsCollection);
   registerRoutes(db.collection('users'), db.collection('carts'), productsCollection);
 }
 

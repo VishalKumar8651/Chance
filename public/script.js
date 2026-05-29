@@ -293,6 +293,13 @@ const API_BASE = window.CHANCE_API_BASE ?? '';
 let cartItems = [];
 let cartCount = 0;
 
+function resolveApiUrl(path) {
+  if (!path) return '';
+  if (/^https?:\/\//i.test(path)) return path;
+  const base = API_BASE ?? '';
+  return `${base}${path.startsWith('/') ? path : `/${path}`}`;
+}
+
 // Get current logged-in user from localStorage
 function getCurrentUser() {
   try {
@@ -447,7 +454,7 @@ function openModal(data) {
   currentSize = 'M';
   currentProduct = data;
 
-  document.getElementById('modal-img').src = data.image || 'assets/girl.jpg';
+  document.getElementById('modal-img').src = resolveApiUrl(data.image) || 'assets/girl.jpg';
   document.getElementById('modal-category').textContent = data.category;
   document.getElementById('modal-name').textContent = data.name;
   document.getElementById('modal-price').textContent = data.price;
@@ -575,7 +582,7 @@ function buildProductCardHTML(p, { pgReveal = false } = {}) {
       data-desc="${escapeHtml(p.desc)}"
       data-image="${escapeHtml(p.image)}">
       <div class="product-img-wrap">
-        <img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}" class="product-img" loading="lazy" />
+        <img src="${escapeHtml(resolveApiUrl(p.image))}" alt="${escapeHtml(p.name)}" class="product-img" loading="lazy" />
         <div class="product-overlay"><button class="btn-primary quick-view-btn">Quick View</button></div>
         ${badgeHtml}
       </div>
@@ -773,7 +780,7 @@ function renderSearchResults(query) {
     const category = p.searchCategory || p.categoryLabel || p.category;
     return `
     <div class="search-result-item" onclick="closeSearch(); document.getElementById('collection')?.scrollIntoView({behavior:'smooth'})">
-      <img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}" />
+      <img src="${escapeHtml(resolveApiUrl(p.image))}" alt="${escapeHtml(p.name)}" />
       <div class="search-result-info">
         <strong>${escapeHtml(p.name)}</strong>
         <span>${escapeHtml(category)} · ${escapeHtml(p.price)}${p.badge ? ' · ' + escapeHtml(p.badge) : ''}</span>

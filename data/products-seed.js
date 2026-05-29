@@ -12,7 +12,7 @@ const SEED_PRODUCTS = [
     badge: 'New',
     badgeClass: '',
     desc: 'An enchanting floor-length gown with a deep-plunge neckline and shimmering midnight blue fabric. Perfect for galas, anniversary dinners, and those evenings where you want to leave everyone breathless.',
-    image: 'assets/Comatozze%20%F0%9F%A5%B5%20The%20Angel%20%F0%9F%98%87.jpg',
+    imageFile: 'Comatozze',
     featured: false,
   },
   {
@@ -27,7 +27,7 @@ const SEED_PRODUCTS = [
     badge: '✦ Star',
     badgeClass: 'badge-gold',
     desc: 'The crown jewel of our 2026 collection. A sculpted golden silk ensemble with hand-sewn crystal detailing, flowing train, and a timeless silhouette that commands every room it enters.',
-    image: 'assets/Uma%20North.jpg',
+    imageFile: 'Uma North.jpg',
     featured: true,
   },
   {
@@ -42,7 +42,7 @@ const SEED_PRODUCTS = [
     badge: 'Sale',
     badgeClass: 'badge-pink',
     desc: 'Light, airy and effortlessly chic. This two-piece summer co-ord in breathable linen blends comfort with contemporary style. Great for brunches, beach walks, and everything in between.',
-    image: 'assets/Beautiful%20Casual%20Dresses.jpg',
+    imageFile: 'Beautiful Casual Dresses.jpg',
     featured: false,
   },
   {
@@ -57,7 +57,7 @@ const SEED_PRODUCTS = [
     badge: '',
     badgeClass: '',
     desc: 'A dreamy rose-blush couture gown adorned with handcrafted petal appliqués. The bias-cut silhouette drapes beautifully on every frame, making it the perfect choice for cocktail events and soirées.',
-    image: 'assets/cute%20simile.jpg',
+    imageFile: 'cute simile.jpg',
     featured: false,
   },
   {
@@ -72,7 +72,7 @@ const SEED_PRODUCTS = [
     badge: 'Bridal',
     badgeClass: 'badge-bridal',
     desc: 'Your dream wedding dress, reimagined. Ivory duchess satin with intricate lace detailing, a cathedral train, and a corset bodice that cinches at the waist for a stunning silhouette. Delivered with a complimentary veil.',
-    image: 'assets/Comatozze%20%F0%9F%A5%B5%20The%20Angel%20%F0%9F%98%87.jpg',
+    imageFile: 'Comatozze',
     featured: false,
   },
   {
@@ -87,7 +87,7 @@ const SEED_PRODUCTS = [
     badge: 'Luxury',
     badgeClass: 'badge-gold',
     desc: 'Pure indulgence in deep midnight velvet. This fitted column gown with a thigh-high slit and dramatic off-shoulder neckline is crafted for women who don\'t just enter rooms — they own them.',
-    image: 'assets/Uma%20North.jpg',
+    imageFile: 'Uma North.jpg',
     featured: false,
   },
   {
@@ -102,7 +102,7 @@ const SEED_PRODUCTS = [
     badge: 'Best Seller',
     badgeClass: 'badge-pink',
     desc: 'The dress you\'ll reach for every Sunday. A flowy midi dress in a floral print with adjustable straps and a smocked bodice. Made from 100% organic cotton — light, soft, and effortless.',
-    image: 'assets/Beautiful%20Casual%20Dresses.jpg',
+    imageFile: 'Beautiful Casual Dresses.jpg',
     featured: false,
   },
   {
@@ -117,10 +117,14 @@ const SEED_PRODUCTS = [
     badge: 'New',
     badgeClass: '',
     desc: 'A breathtaking blush pink lehenga set embroidered with real zari thread and mirror work. Comes with a dupatta and matching blouse. The perfect blend of tradition and contemporary luxury for your big day.',
-    image: 'assets/cute%20simile.jpg',
+    imageFile: 'cute simile.jpg',
     featured: false,
   },
 ];
+
+function productImageUrl(doc) {
+  return `/api/products/${String(doc._id)}/image`;
+}
 
 function formatProduct(doc) {
   return {
@@ -135,9 +139,16 @@ function formatProduct(doc) {
     badge: doc.badge || '',
     badgeClass: doc.badgeClass || '',
     desc: doc.desc,
-    image: doc.image,
+    image: productImageUrl(doc),
     featured: !!doc.featured,
   };
 }
 
-module.exports = { SEED_PRODUCTS, formatProduct };
+function toImageBuffer(imageData) {
+  if (!imageData) return null;
+  if (Buffer.isBuffer(imageData)) return imageData;
+  if (imageData.buffer) return Buffer.from(imageData.buffer);
+  return Buffer.from(imageData);
+}
+
+module.exports = { SEED_PRODUCTS, formatProduct, productImageUrl, toImageBuffer };
