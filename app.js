@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ObjectId, ServerApiVersion } = require('mongodb');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -46,6 +46,8 @@ function authenticate(req, res, next) {
   }
 }
 
+const { SEED_PRODUCTS, formatProduct } = require('./data/products-seed');
+
 const client = uri
   ? new MongoClient(uri, {
       serverApi: {
@@ -58,7 +60,50 @@ const client = uri
 
 let initError = null;
 
-function registerRoutes(usersCollection, cartsCollection) {
+async function seedProductsIfEmpty(productsCollection) {
+  const count = await productsCollection.countDocuments();
+  if (count === 0) {
+    const now = new Date();
+    await productsCollection.insertMany(
+      SEED_PRODUCTS.map((product) => ({ ...product, createdAt: now }))
+    );
+    console.log(`Seeded ${SEED_PRODUCTS.length} products into MongoDB`);
+  }
+}
+
+function registerRoutes(usersCollection, cartsCollection, productsCollection) {
+  app.get('/api/products', async (req, res) => {
+    try {
+      const filter = {};
+      const category = String(req.query.category || '').trim().toLowerCase();
+      if (category && category !== 'all') {
+        filter.category = category;
+      }
+
+      const docs = await productsCollection.find(filter).sort({ sortOrder: 1 }).toArray();
+      res.json({ success: true, products: docs.map(formatProduct) });
+    } catch (err) {
+      console.error('Error fetching products:', err);
+      res.status(500).json({ success: false, message: 'Failed to fetch products.' });
+    }
+  });
+
+  app.get('/api/products/:id', async (req, res) => {
+    try {
+      if (!ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ success: false, message: 'Invalid product id.' });
+      }
+      const doc = await productsCollection.findOne({ _id: new ObjectId(req.params.id) });
+      if (!doc) {
+        return res.status(404).json({ success: false, message: 'Product not found.' });
+      }
+      res.json({ success: true, product: formatProduct(doc) });
+    } catch (err) {
+      console.error('Error fetching product:', err);
+      res.status(500).json({ success: false, message: 'Failed to fetch product.' });
+    }
+  });
+
   app.post('/api/signup', async (req, res) => {
     const name = String(req.body?.name || '').trim();
     const email = normalizeEmail(req.body?.email);
@@ -199,7 +244,9 @@ async function initialize() {
   await client.connect();
   console.log('Connected successfully to MongoDB Atlas');
   const db = client.db('chance_db');
-  registerRoutes(db.collection('users'), db.collection('carts'));
+  const productsCollection = db.collection('products');
+  await seedProductsIfEmpty(productsCollection);
+  registerRoutes(db.collection('users'), db.collection('carts'), productsCollection);
 }
 
 const ready = initialize().catch((error) => {

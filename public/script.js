@@ -447,7 +447,7 @@ function openModal(data) {
   currentSize = 'M';
   currentProduct = data;
 
-  document.getElementById('modal-img').src = 'assets/girl.jpg';
+  document.getElementById('modal-img').src = data.image || 'assets/girl.jpg';
   document.getElementById('modal-category').textContent = data.category;
   document.getElementById('modal-name').textContent = data.name;
   document.getElementById('modal-price').textContent = data.price;
@@ -532,43 +532,162 @@ document.getElementById('modal-wishlist')?.addEventListener('click', function() 
 });
 
 // -----------------------------------------------
-// 15. WIRE UP "QUICK VIEW" BUTTONS
+// 15. PRODUCTS (MongoDB API)
 // -----------------------------------------------
-function wireQuickView() {
-  document.querySelectorAll('.quick-view-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const card = btn.closest('.product-card');
-      if (!card) return;
-      openModal({
-        name:     card.dataset.name,
-        category: card.dataset.categoryLabel,
-        price:    card.dataset.price,
-        old:      card.dataset.old,
-        discount: card.dataset.discount,
-        badge:    card.dataset.badge,
-        desc:     card.dataset.desc,
-      });
-    });
-  });
+let allProducts = [];
 
-  // Clicking main card area also opens modal
-  document.querySelectorAll('.product-card').forEach(card => {
-    card.addEventListener('click', (e) => {
-      if (e.target.closest('.quick-view-btn')) return;
-      openModal({
-        name:     card.dataset.name,
-        category: card.dataset.categoryLabel,
-        price:    card.dataset.price,
-        old:      card.dataset.old,
-        discount: card.dataset.discount,
-        badge:    card.dataset.badge,
-        desc:     card.dataset.desc,
-      });
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str ?? '';
+  return div.innerHTML;
+}
+
+function openModalFromCard(card) {
+  openModal({
+    name:     card.dataset.name,
+    category: card.dataset.categoryLabel,
+    price:    card.dataset.price,
+    old:      card.dataset.old,
+    discount: card.dataset.discount,
+    badge:    card.dataset.badge,
+    desc:     card.dataset.desc,
+    image:    card.dataset.image,
+  });
+}
+
+function buildProductCardHTML(p, { pgReveal = false } = {}) {
+  const classes = ['product-card', 'card-3d', pgReveal ? 'pg-reveal' : '', p.featured ? 'featured' : '']
+    .filter(Boolean)
+    .join(' ');
+  const badgeHtml = p.badge
+    ? `<span class="product-badge ${escapeHtml(p.badgeClass)}">${escapeHtml(p.badge)}</span>`
+    : '';
+
+  return `
+    <div class="${classes}"
+      data-category="${escapeHtml(p.category)}"
+      data-name="${escapeHtml(p.name)}"
+      data-category-label="${escapeHtml(p.categoryLabel)}"
+      data-price="${escapeHtml(p.price)}"
+      data-old="${escapeHtml(p.oldPrice)}"
+      data-discount="${escapeHtml(p.discount)}"
+      data-badge="${escapeHtml(p.badge)}"
+      data-desc="${escapeHtml(p.desc)}"
+      data-image="${escapeHtml(p.image)}">
+      <div class="product-img-wrap">
+        <img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}" class="product-img" loading="lazy" />
+        <div class="product-overlay"><button class="btn-primary quick-view-btn">Quick View</button></div>
+        ${badgeHtml}
+      </div>
+      <div class="product-info">
+        <h4>${escapeHtml(p.name)}</h4>
+        <p>${escapeHtml(p.categoryLabel)}</p>
+        <div class="product-price">
+          <span class="price">${escapeHtml(p.price)}</span>
+          <span class="price-old">${escapeHtml(p.oldPrice)}</span>
+        </div>
+      </div>
+    </div>`;
+}
+
+function bindCard3dTilt(cards) {
+  cards.forEach(card => {
+    if (card.dataset.tiltBound) return;
+    card.dataset.tiltBound = '1';
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width - 0.5) * 12;
+      const y = ((e.clientY - rect.top) / rect.height - 0.5) * -12;
+      card.style.transition = 'none';
+      card.style.transform = `perspective(1000px) rotateX(${y}deg) rotateY(${x}deg) translateZ(6px)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transition = 'transform 0.5s ease';
+      card.style.transform = '';
     });
   });
 }
-wireQuickView();
+
+function bindProductCardCursor(cards) {
+  cards.forEach(el => {
+    if (el.dataset.cursorBound) return;
+    el.dataset.cursorBound = '1';
+    el.addEventListener('mouseenter', () => {
+      cursor?.classList.add('cursor-hover');
+      cursorFollower?.classList.add('cursor-hover');
+      cursorFollower.innerHTML = '<span class="cursor-text">View</span>';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor?.classList.remove('cursor-hover');
+      cursorFollower?.classList.remove('cursor-hover');
+      cursorFollower.innerHTML = '';
+    });
+  });
+}
+
+function observeDynamicReveals(cards) {
+  cards.forEach((el, i) => {
+    if (el.classList.contains('reveal') || el.classList.contains('visible')) return;
+    el.classList.add('reveal');
+    el.style.transitionDelay = (i % 4) * 80 + 'ms';
+    revealObs.observe(el);
+  });
+}
+
+function initProductGridEvents() {
+  const grid = document.getElementById('collection-grid');
+  if (!grid || grid.dataset.eventsBound) return;
+  grid.dataset.eventsBound = '1';
+  grid.addEventListener('click', (e) => {
+    const card = e.target.closest('.product-card');
+    if (!card) return;
+    if (e.target.closest('.quick-view-btn')) {
+      e.stopPropagation();
+      openModalFromCard(card);
+      return;
+    }
+    if (e.target.closest('button')) return;
+    openModalFromCard(card);
+  });
+}
+
+async function loadProducts() {
+  const grid = document.getElementById('collection-grid');
+  if (!grid) return;
+
+  const pgReveal = grid.classList.contains('collection-full-grid');
+  grid.innerHTML = '<p class="products-loading" style="grid-column:1/-1;text-align:center;color:var(--clr-text-muted);">Loading collection…</p>';
+
+  try {
+    const res = await fetch(`${API_BASE}/api/products`);
+    const data = await res.json();
+    if (!res.ok || !data.success) {
+      throw new Error(data.message || 'Failed to load products');
+    }
+
+    allProducts = data.products;
+    if (allProducts.length === 0) {
+      grid.innerHTML = '<p class="products-empty" style="grid-column:1/-1;text-align:center;color:var(--clr-text-muted);">No products available yet.</p>';
+      return;
+    }
+
+    grid.innerHTML = allProducts.map((p) => buildProductCardHTML(p, { pgReveal })).join('');
+    const cards = grid.querySelectorAll('.product-card');
+    bindCard3dTilt(cards);
+    bindProductCardCursor(cards);
+
+    if (pgReveal && typeof window.pgRevealObserve === 'function') {
+      cards.forEach((el) => window.pgRevealObserve(el));
+    } else {
+      observeDynamicReveals(cards);
+    }
+  } catch (err) {
+    console.error('Products load error:', err);
+    grid.innerHTML = '<p class="products-error" style="grid-column:1/-1;text-align:center;color:var(--clr-text-muted);">Could not load products. Please try again later.</p>';
+  }
+}
+
+initProductGridEvents();
 
 // -----------------------------------------------
 // 16. COLLECTION FILTER
@@ -617,7 +736,7 @@ if (viewAllBtn) {
       document.querySelector('[data-filter="all"]')?.classList.add('active');
       viewAllBtn.textContent = '✦ Showing All Designs';
       allVisible = true;
-      showToast('✦ Showing all 8 designs');
+      showToast(`✦ Showing all ${allProducts.length} designs`);
     } else {
       viewAllBtn.textContent = 'View All Designs ✦';
       allVisible = false;
@@ -639,35 +758,28 @@ const searchOverlay = document.getElementById('search-overlay');
 const searchInput   = document.getElementById('search-input');
 const searchResults = document.getElementById('search-results');
 
-const allProducts = [
-  { name: 'Midnight Bloom Gown',    category: 'Evening',  price: '₹4,999', badge: 'New' },
-  { name: 'Golden Hour Ensemble',   category: 'Luxury',   price: '₹8,999', badge: '✦ Star' },
-  { name: 'Breezy Summer Set',      category: 'Casual',   price: '₹2,499', badge: 'Sale' },
-  { name: 'Rose Petal Couture',     category: 'Evening',  price: '₹6,499', badge: '' },
-  { name: 'Ivory Dreams Bridal',    category: 'Bridal',   price: '₹18,999', badge: 'Bridal' },
-  { name: 'Velvet Noir Gown',       category: 'Luxury',   price: '₹11,499', badge: 'Luxury' },
-  { name: 'Sunday Bloom Dress',     category: 'Casual',   price: '₹1,999', badge: 'Best Seller' },
-  { name: 'Blush Ceremony Lehenga', category: 'Bridal',   price: '₹22,999', badge: 'New' },
-];
-
 function renderSearchResults(query) {
   if (!searchResults) return;
   const q = query.toLowerCase();
-  const matches = q ? allProducts.filter(p =>
-    p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q)
-  ) : [];
+  const matches = q ? allProducts.filter(p => {
+    const label = (p.searchCategory || p.categoryLabel || p.category || '').toLowerCase();
+    return p.name.toLowerCase().includes(q) || label.includes(q);
+  }) : [];
   if (matches.length === 0 && q) {
     searchResults.innerHTML = `<p style="color:var(--clr-text-muted);text-align:center;font-size:0.9rem;">No results for "${query}"</p>`;
     return;
   }
-  searchResults.innerHTML = matches.map(p => `
-    <div class="search-result-item" onclick="closeSearch(); document.getElementById('collection').scrollIntoView({behavior:'smooth'})">
-      <img src="assets/girl.jpg" alt="${p.name}" />
+  searchResults.innerHTML = matches.map(p => {
+    const category = p.searchCategory || p.categoryLabel || p.category;
+    return `
+    <div class="search-result-item" onclick="closeSearch(); document.getElementById('collection')?.scrollIntoView({behavior:'smooth'})">
+      <img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}" />
       <div class="search-result-info">
-        <strong>${p.name}</strong>
-        <span>${p.category} · ${p.price}${p.badge ? ' · ' + p.badge : ''}</span>
+        <strong>${escapeHtml(p.name)}</strong>
+        <span>${escapeHtml(category)} · ${escapeHtml(p.price)}${p.badge ? ' · ' + escapeHtml(p.badge) : ''}</span>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function openSearch() {
@@ -729,6 +841,8 @@ window.showToast = showToast;
 // -----------------------------------------------
 // CONSOLE BRAND
 // -----------------------------------------------
+loadProducts();
+
 console.log(
   '%c✦ CHANCE — Elegance Meets Opportunity%c\nAll systems loaded. Buttons functional!',
   'background:linear-gradient(135deg,#9333ea,#ec4899);color:#fff;padding:10px 20px;border-radius:6px;font-weight:700;font-size:14px;',
